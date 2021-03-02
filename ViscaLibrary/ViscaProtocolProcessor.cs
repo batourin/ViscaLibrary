@@ -132,12 +132,12 @@ namespace Visca
 
 #endif
 
-        internal void enqueueCommand(ViscaTxPacket command)
+        public void EnqueueCommand(ViscaTxPacket command)
         {
-            enqueueCommand(command, null);
+            EnqueueCommand(command, null);
         }
 
-        internal void enqueueCommand(ViscaTxPacket command, Action<ViscaRxPacket> reply)
+        public void EnqueueCommand(ViscaTxPacket command, Action<ViscaRxPacket> reply)
         {
             // check for existing command in the Queue
             bool commandIsEnqueued = false;

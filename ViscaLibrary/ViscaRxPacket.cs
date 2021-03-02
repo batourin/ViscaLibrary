@@ -4,7 +4,7 @@ using System.Text;
 namespace Visca
 {
 
-    internal class ViscaRxPacket: ViscaPacket
+    public class ViscaRxPacket: ViscaPacket
     {
 
         public ViscaRxPacket(byte[] data)

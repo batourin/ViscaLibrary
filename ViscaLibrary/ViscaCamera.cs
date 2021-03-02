@@ -69,7 +69,7 @@ namespace Visca
             _powerOnCmd = new ViscaPower((byte)id, true);
             _powerOffCmd = new ViscaPower((byte)id, false);
             _powerInquiry = new ViscaPowerInquiry((byte)id, new Action<bool>( power => { _power = power; OnPowerChanged(new PowerEventArgs(power)); }));
-            _powerOnOffCmdReply = new Action<ViscaRxPacket>( rxPacket => { if ( rxPacket.IsCompletionCommand ) _visca.enqueueCommand(_powerInquiry); } );
+            _powerOnOffCmdReply = new Action<ViscaRxPacket>( rxPacket => { if ( rxPacket.IsCompletionCommand ) _visca.EnqueueCommand(_powerInquiry); } );
 
             _zoomStopCmd = new ViscaZoomStop((byte)id);
             _zoomTeleCmd = new ViscaZoomTele((byte)id);
@@ -119,9 +119,9 @@ namespace Visca
             set 
             {
                 if(value)
-                    _visca.enqueueCommand(_powerOnCmd, _powerOnOffCmdReply);
+                    _visca.EnqueueCommand(_powerOnCmd, _powerOnOffCmdReply);
                 else
-                    _visca.enqueueCommand(_powerOffCmd, _powerOnOffCmdReply);
+                    _visca.EnqueueCommand(_powerOffCmd, _powerOnOffCmdReply);
             }
         }
 
@@ -129,9 +129,9 @@ namespace Visca
 
         #region Zoom Commands Implementations
 
-        public void ZoomStop() { _visca.enqueueCommand(_zoomStopCmd); }
-        public void ZoomTele() { _visca.enqueueCommand(_zoomTeleCmd); }
-        public void ZoomWide() { _visca.enqueueCommand(_zoomWideCmd); }
+        public void ZoomStop() { _visca.EnqueueCommand(_zoomStopCmd); }
+        public void ZoomTele() { _visca.EnqueueCommand(_zoomTeleCmd); }
+        public void ZoomWide() { _visca.EnqueueCommand(_zoomWideCmd); }
 
         public byte ZoomSpeed
         {
@@ -142,10 +142,10 @@ namespace Visca
             }
         }
 
-        public void ZoomTeleWithSpeed() { _visca.enqueueCommand(_zoomTeleWithSpeedCmd); }
-        public void ZoomWideWithSpeed() { _visca.enqueueCommand(_zoomWideWithSpeedCmd); }
+        public void ZoomTeleWithSpeed() { _visca.EnqueueCommand(_zoomTeleWithSpeedCmd); }
+        public void ZoomWideWithSpeed() { _visca.EnqueueCommand(_zoomWideWithSpeedCmd); }
 
-        public void ZoomPosition(int position) { _visca.enqueueCommand(_zoomPositionCmd.SetPosition(position)); }
+        public void ZoomPosition(int position) { _visca.EnqueueCommand(_zoomPositionCmd.SetPosition(position)); }
 
         #endregion Zoom Commands Implementations
 
@@ -169,25 +169,25 @@ namespace Visca
             }
         }
 
-        public void Home() { _visca.enqueueCommand(_ptzHome); }
-        public void Stop() { _visca.enqueueCommand(_ptzStop); }
-        public void Up() { _visca.enqueueCommand(_ptzUp); }
-        public void Down() { _visca.enqueueCommand(_ptzDown); }
-        public void Left() { _visca.enqueueCommand(_ptzStop); }
-        public void Right() { _visca.enqueueCommand(_ptzStop); }
-        public void UpLeft() { _visca.enqueueCommand(_ptzStop); }
-        public void UpRight() { _visca.enqueueCommand(_ptzStop); }
-        public void DownLeft() { _visca.enqueueCommand(_ptzStop); }
-        public void DownRight() { _visca.enqueueCommand(_ptzStop); }
+        public void Home() { _visca.EnqueueCommand(_ptzHome); }
+        public void Stop() { _visca.EnqueueCommand(_ptzStop); }
+        public void Up() { _visca.EnqueueCommand(_ptzUp); }
+        public void Down() { _visca.EnqueueCommand(_ptzDown); }
+        public void Left() { _visca.EnqueueCommand(_ptzStop); }
+        public void Right() { _visca.EnqueueCommand(_ptzStop); }
+        public void UpLeft() { _visca.EnqueueCommand(_ptzStop); }
+        public void UpRight() { _visca.EnqueueCommand(_ptzStop); }
+        public void DownLeft() { _visca.EnqueueCommand(_ptzStop); }
+        public void DownRight() { _visca.EnqueueCommand(_ptzStop); }
 
         public void PositionAbsolute(int panPosition, int tiltPosition)
         {
-            _visca.enqueueCommand(_ptzAbsolute.SetPosition(panPosition, tiltPosition));
+            _visca.EnqueueCommand(_ptzAbsolute.SetPosition(panPosition, tiltPosition));
         }
 
         public void PositionRelative(int panPosition, int tiltPosition)
         {
-            _visca.enqueueCommand(_ptzRelative.SetPosition(panPosition, tiltPosition));
+            _visca.EnqueueCommand(_ptzRelative.SetPosition(panPosition, tiltPosition));
         }
 
         #endregion PTZ Commands Implementations
