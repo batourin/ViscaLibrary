@@ -19,7 +19,7 @@ namespace Visca
         {
             get
             {
-                return (!IsCompletionCommand && ((_bytes.Length == 3) && ((_bytes[1] & 0x40) == 0x40 ))) ? true : false;
+                return (!IsCompletionCommand && ((_bytes.Length == 3) && ((_bytes[1] & 0x40) == 0x40 )));
             }
         }
 
@@ -27,7 +27,7 @@ namespace Visca
         {
             get
             {
-                return ((_bytes.Length == 3) && ((_bytes[1] & 0x50) == 0x50 )) ? true : false;
+                return ((_bytes.Length == 3) && ((_bytes[1] & 0x50) == 0x50 ));
             }
         }
 
@@ -35,7 +35,7 @@ namespace Visca
         {
             get
             {
-                return ((_bytes.Length > 3) && ((_bytes[1] & 0x50) == 0x50 )) ? true : false;
+                return ((_bytes.Length > 3) && ((_bytes[1] & 0x50) == 0x50 ));
             }
         }
 
@@ -46,7 +46,7 @@ namespace Visca
 
         public bool IsError
         {
-            get { return ((_bytes[1] & 0x60) == 0x60) ? true : false; }
+            get { return ((_bytes[1] & 0x60) == 0x60); }
         }
 
         public ViscaError Error
@@ -76,6 +76,8 @@ namespace Visca
             {
                 get { return _getPayLoadAction(i); }
             }
+
+            public int Length { get { return _length; } }
         }
 
         private byte getPayload(int i)
