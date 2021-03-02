@@ -111,25 +111,14 @@ namespace Visca
             _responseParseThread = new Thread(parseResponse);
             _responseParseThread.Start();
 #endif
-
-#if SSHARP
-            foreach (ViscaCameraId cameraId in EnumExtensions.GetValues(typeof(ViscaCameraId)))
-#else
-            foreach (ViscaCameraId cameraId in Enum.GetValues(typeof(ViscaCameraId)))
-#endif
-            {
-                //_cameras.Add(cameraId, new ViscaCamera(this, cameraId));
-            }
         }
 
-#if SSHARP
-#else
+#if !SSHARP
         ~ViscaProtocolProcessor()
         {
             _responseQueue.CompleteAdding();
             _responseQueueCancel.Cancel(false);
         }
-
 #endif
 
         public void EnqueueCommand(ViscaTxPacket command)
