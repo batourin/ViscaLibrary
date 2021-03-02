@@ -363,7 +363,7 @@ namespace Visca
 #else
                 throw new ArgumentNullException(nameof(data), "Supplied data is not in visca packet format");
 #endif
-            if ((data.Length == 0 ))
+            if (data.Length == 0)
 #if SSHARP
                 throw new ArgumentOutOfRangeException("data", "Supplied data length can't be zero");
 #else
