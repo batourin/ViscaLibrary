@@ -54,7 +54,7 @@ namespace Visca
             int index = Length;
             _bytes[index] = data;
             _bytes[index] = (byte)((_bytes[index] & mask) + variable.Value);
-            variable.VariableChanged += new EventHandler<ViscaVariable.VariableEventArgs>( (var, args) => { variableUpdater(index, mask, args); } );
+            variable.VariableChanged += (var, args) => { variableUpdater(index, mask, args); };
             Length++;
         }
 

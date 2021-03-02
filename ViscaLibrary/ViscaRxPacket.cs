@@ -65,8 +65,8 @@ namespace Visca
 #region Payload property
         public class PayLoadIndexer
         {
-            private Func<int, byte> _getPayLoadAction;
-            private int _length;
+            private readonly Func<int, byte> _getPayLoadAction;
+            private readonly int _length;
             public PayLoadIndexer(int length, Func<int, byte> getPayLoadAction)
             {
                 _length = length;
