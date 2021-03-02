@@ -61,9 +61,9 @@ namespace Visca
                 Reply = reply;
             }
         }
-        private Dictionary<ViscaCameraId, ViscaCamera> _cameras = new Dictionary<ViscaCameraId, ViscaCamera>(7);
+        private readonly Dictionary<ViscaCameraId, ViscaCamera> _cameras = new Dictionary<ViscaCameraId, ViscaCamera>(7);
 
-		private byte[] _incomingBuffer = new byte[1024];
+		private readonly byte[] _incomingBuffer = new byte[1024];
         private int _incomingBufferLength = 0;
 
 #if SSHARP
@@ -85,7 +85,7 @@ namespace Visca
 		/// Action to send data to consumer
 		/// </summary>
 		/// <param>byte array to send</param>
-        private Action<byte[]> _sendData;
+        private readonly Action<byte[]> _sendData;
 
         public ViscaProtocolProcessor(Action<byte[]> sendData, Action<byte, string, object[]> logAction)
         {
@@ -220,16 +220,24 @@ namespace Visca
 #endif
                         if (rxPacket.IsAck)
                         {
-                            if(_sendQueueItemInProgress.Reply != null)
+#if SSHARP
+                            if (_sendQueueItemInProgress.Reply != null)
                                 _sendQueueItemInProgress.Reply(rxPacket);
+#else
+                            _sendQueueItemInProgress.Reply?.Invoke(rxPacket);
+#endif
                             continue;
                         } // rxPacket.IsAck
                         else  if (rxPacket.IsCompletionCommand)
                         {
                             if(!(_sendQueueItemInProgress.Packet is ViscaCommand))
                                 logMessage(2, "Collision, completion message is not for Command type message");
-                            if(_sendQueueItemInProgress.Reply != null)
+#if SSHARP
+                            if (_sendQueueItemInProgress.Reply != null)
                                 _sendQueueItemInProgress.Reply(rxPacket);
+#else
+                                _sendQueueItemInProgress.Reply?.Invoke(rxPacket);
+#endif
                         } // rxPacket.IsCompletionCommand
                         else if (rxPacket.IsCompletionInquiry)
                         {
@@ -276,8 +284,12 @@ namespace Visca
                             logMessage(1, "Error: unknown packet type");
                         }
 
-                        if(_sendQueueItemInProgress.Reply != null)
+#if SSHARP
+                        if (_sendQueueItemInProgress.Reply != null)
                             _sendQueueItemInProgress.Reply(rxPacket);
+#else
+                        _sendQueueItemInProgress.Reply?.Invoke(rxPacket);
+#endif
 
                         logMessage(2, "Completing command in progress: '{0}'", _sendQueueItemInProgress.Packet.ToString());
                         _sendQueueItemInProgress = null;
@@ -317,7 +329,7 @@ namespace Visca
         }
         public class CamerasIndexer
         {
-            private Func<ViscaCameraId, ViscaCamera> _getCameraAction;
+            private readonly Func<ViscaCameraId, ViscaCamera> _getCameraAction;
             public CamerasIndexer(Func<ViscaCameraId, ViscaCamera> getCameraAction)
             {
                 _getCameraAction = getCameraAction;
@@ -357,13 +369,25 @@ namespace Visca
         public void ProcessIncomingData(byte[] data)
         {
             if(data == null)
+#if SSHARP
                 throw new ArgumentNullException("data", "Supplied data is not in visca packet format");
-            if((data.Length == 0 ))
-                throw new ArgumentException("data", "Supplied data is not in visca packet format");
+#else
+                throw new ArgumentNullException(nameof(data), "Supplied data is not in visca packet format");
+#endif
+            if ((data.Length == 0 ))
+#if SSHARP
+                throw new ArgumentOutOfRangeException("data", "Supplied data length can't be zero");
+#else
+                throw new ArgumentOutOfRangeException(nameof(data), "Supplied data length can't be zero");
+#endif
 
-            if((_incomingBufferLength + data.Length) > _incomingBuffer.Length)
+            if ((_incomingBufferLength + data.Length) > _incomingBuffer.Length)
+#if SSHARP
                 throw new ArgumentOutOfRangeException("data", "Out of incoming buffer: Incoming data can't be added to current buffer");
-            
+#else
+                throw new ArgumentOutOfRangeException(nameof(data), "Out of incoming buffer: Incoming data can't be added to current buffer");
+#endif
+
             data.CopyTo(_incomingBuffer, _incomingBufferLength);
             _incomingBufferLength += data.Length;
 
@@ -382,7 +406,7 @@ namespace Visca
             }
             // Skip over delimmiter and save the rest for next time
             Array.Copy(_incomingBuffer, idxStart, _incomingBuffer, 0, _incomingBufferLength - idxStart);
-            _incomingBufferLength =  _incomingBufferLength - idxStart;
+            _incomingBufferLength -=  idxStart;
         }
 
         /// <summary>
@@ -395,22 +419,33 @@ namespace Visca
         public void ProcessPacket(byte[] data)
         {
             if(data == null)
+#if SSHARP
                 throw new ArgumentNullException("data", "Supplied data is not in visca packet format");
-            if((data.Length == 0 ) || (data[data.Length-1] != Visca.Terminator))
-                throw new ArgumentException("data", "Supplied data is not in visca packet format");
-            
+#else
+                throw new ArgumentNullException(nameof(data), "Supplied data is not in visca packet format");
+#endif
+            if ((data.Length == 0 ) || (data[data.Length-1] != Visca.Terminator))
+#if SSHARP
+                throw new ArgumentException("Supplied data is not in visca packet format", "data");
+#else
+                throw new ArgumentException("Supplied data is not in visca packet format", nameof(data));
+#endif
             _responseQueue.Enqueue(new ViscaRxPacket(data));
         }
 
-        #endregion IO processing
+#endregion IO processing
 
         /// <summary>
         /// Sends log data to associated log action with log level
         /// </summary>
         private void logMessage(byte level, string format, params object[] args)
         {
+#if SSHARP
             if(_logAction != null)
                 _logAction(level, format, args);
+#else
+            _logAction?.Invoke(level, format, args);
+#endif
         }
 
         public void Test()

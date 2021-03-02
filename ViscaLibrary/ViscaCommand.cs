@@ -13,7 +13,7 @@ namespace Visca
 
     public class ViscaPower: ViscaCommand
     {
-        private bool _power;
+        private readonly bool _power;
         public ViscaPower(byte address, bool power)
         : base(address)
         {

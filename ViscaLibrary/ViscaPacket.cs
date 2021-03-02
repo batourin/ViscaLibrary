@@ -11,14 +11,17 @@ namespace Visca
         {
             if(data != null)
             {
-                if((data.Length < 3) || ((data[0] & 0x80) != 0x80) || (data[data.Length -1] != Visca.Terminator))
-                    throw new ArgumentException("data", "Supplied byte array does not appear as Visca packet");
+                if ((data.Length < 3) || ((data[0] & 0x80) != 0x80) || (data[data.Length - 1] != Visca.Terminator))
+#if SSHARP
+                    throw new ArgumentOutOfRangeException("data", "Supplied byte array does not appear as Visca packet");
+#else
+                    throw new ArgumentOutOfRangeException(nameof(data), "Supplied byte array does not appear as Visca packet");
+#endif
                 _bytes = data;
             }
             else
                 _bytes = new byte[32];
         }
-
 
         public byte Source
         {

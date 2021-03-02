@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViscaLibrary", "ViscaLibrary\ViscaLibrarySSHARP.csproj", "{9D249E47-8F95-4437-A6BB-563510287AD1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViscaLibrary", "ViscaLibrary\ViscaLibrarySSharp.csproj", "{9D249E47-8F95-4437-A6BB-563510287AD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
