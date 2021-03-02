@@ -7,6 +7,7 @@ using FluentAssertions;
 
 namespace Visca.Tests
 {
+    [TestFixture]
     class UnitTestViscaProtocolProcessor
     {
         ViscaProtocolProcessor visca;

@@ -3,6 +3,7 @@ using System.Linq;
 
 namespace Visca.Tests
 {
+    [TestFixture]
     class UnitTestViscaPacket
     {
         [Test]

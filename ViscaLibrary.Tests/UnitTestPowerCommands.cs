@@ -3,6 +3,7 @@ using System.Linq;
 
 namespace Visca.Tests
 {
+    [TestFixture]
     public class UintTestPowerCommands
     {
         [SetUp]
