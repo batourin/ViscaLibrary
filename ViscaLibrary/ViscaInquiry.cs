@@ -15,7 +15,7 @@ namespace Visca
 
     internal class ViscaPowerInquiry: ViscaInquiry
     {
-        private Action<bool> _action;
+        private readonly Action<bool> _action;
         public ViscaPowerInquiry(byte address, Action<bool> action)
         : base(address)
         {

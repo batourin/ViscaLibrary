@@ -65,8 +65,8 @@ namespace Visca
 
     public abstract class ViscaPTZCommand: ViscaCommand
     {
-        protected ViscaPanSpeed _panSpeed { get; private set; }
-        protected ViscaTiltSpeed _tiltSpeed { get; private set; }
+        public ViscaPanSpeed PanSpeed { get; private set; }
+        public ViscaTiltSpeed TiltSpeed { get; private set; }
  
         public ViscaPTZCommand(byte address)
             : this(address, new ViscaPanSpeed(), new ViscaTiltSpeed())
@@ -75,14 +75,14 @@ namespace Visca
         public ViscaPTZCommand(byte address, ViscaPanSpeed panSpeed, ViscaTiltSpeed tiltSpeed)
             : base(address)
         {
-            _panSpeed = panSpeed;
-            _tiltSpeed = tiltSpeed;
+            this.PanSpeed = panSpeed;
+            this.TiltSpeed = tiltSpeed;
             Append(new byte[]{
                 Visca.Category.PanTilt,
                 Visca.Commands.PanTilt,
             });
-            Append(_panSpeed);
-            Append(_tiltSpeed);
+            Append(this.PanSpeed);
+            Append(this.TiltSpeed);
         }
     }
 
@@ -108,7 +108,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} PTZ.Stop with PanSpeed:{1} TiltSpeed:{2}", this.Destination, _panSpeed.Value, _tiltSpeed.Value);
+            return String.Format("Camera{0} PTZ.Stop with PanSpeed:{1} TiltSpeed:{2}", this.Destination, PanSpeed.Value, TiltSpeed.Value);
         }
     }
 
@@ -134,7 +134,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} PTZ.Up with PanSpeed:{1} TiltSpeed:{2}", this.Destination, _panSpeed.Value, _tiltSpeed.Value);
+            return String.Format("Camera{0} PTZ.Up with PanSpeed:{1} TiltSpeed:{2}", this.Destination, PanSpeed.Value, TiltSpeed.Value);
         }
     }
      public class ViscaPTZDown: ViscaPTZCommand
@@ -159,7 +159,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} PTZ.Down with PanSpeed:{1} TiltSpeed:{2}", this.Destination, _panSpeed.Value, _tiltSpeed.Value);
+            return String.Format("Camera{0} PTZ.Down with PanSpeed:{1} TiltSpeed:{2}", this.Destination, PanSpeed.Value, TiltSpeed.Value);
         }
     }
    
@@ -185,7 +185,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} PTZ.Left with PanSpeed:{1} TiltSpeed:{2}", this.Destination, _panSpeed.Value, _tiltSpeed.Value);
+            return String.Format("Camera{0} PTZ.Left with PanSpeed:{1} TiltSpeed:{2}", this.Destination, PanSpeed.Value, TiltSpeed.Value);
         }
     }
    
@@ -211,7 +211,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} PTZ.Right with PanSpeed:{1} TiltSpeed:{2}", this.Destination, _panSpeed.Value, _tiltSpeed.Value);
+            return String.Format("Camera{0} PTZ.Right with PanSpeed:{1} TiltSpeed:{2}", this.Destination, PanSpeed.Value, TiltSpeed.Value);
         }
     }
    
@@ -237,7 +237,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} PTZ.UpLeft with PanSpeed:{1} TiltSpeed:{2}", this.Destination, _panSpeed.Value, _tiltSpeed.Value);
+            return String.Format("Camera{0} PTZ.UpLeft with PanSpeed:{1} TiltSpeed:{2}", this.Destination, PanSpeed.Value, TiltSpeed.Value);
         }
     }
    
@@ -263,7 +263,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} PTZ.UpRight with PanSpeed:{1} TiltSpeed:{2}", this.Destination, _panSpeed.Value, _tiltSpeed.Value);
+            return String.Format("Camera{0} PTZ.UpRight with PanSpeed:{1} TiltSpeed:{2}", this.Destination, PanSpeed.Value, TiltSpeed.Value);
         }
     }
    
@@ -289,7 +289,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} PTZ.DownLeft with PanSpeed:{1} TiltSpeed:{2}", this.Destination, _panSpeed.Value, _tiltSpeed.Value);
+            return String.Format("Camera{0} PTZ.DownLeft with PanSpeed:{1} TiltSpeed:{2}", this.Destination, PanSpeed.Value, TiltSpeed.Value);
         }
     }
    
@@ -315,7 +315,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} PTZ.DownRight with PanSpeed:{1} TiltSpeed:{2}", this.Destination, _panSpeed.Value, _tiltSpeed.Value);
+            return String.Format("Camera{0} PTZ.DownRight with PanSpeed:{1} TiltSpeed:{2}", this.Destination, PanSpeed.Value, TiltSpeed.Value);
         }
     }
    
@@ -323,8 +323,8 @@ namespace Visca
     {
  
         private readonly bool _relative;
-        protected ViscaPanSpeed _panSpeed { get; private set; }
-        protected ViscaTiltSpeed _tiltSpeed { get; private set; }
+        public ViscaPanSpeed PanSpeed { get; private set; }
+        public ViscaTiltSpeed TiltSpeed { get; private set; }
  
         private readonly ViscaVariable _panPositionByte1;
         private readonly ViscaVariable _panPositionByte2;
@@ -347,8 +347,8 @@ namespace Visca
             : base(address)
         {
             _relative = relative;
-            _panSpeed = panSpeed;
-            _tiltSpeed = tiltSpeed;
+            this.PanSpeed = panSpeed;
+            this.TiltSpeed = tiltSpeed;
 
             _panPositionByte1 = new ViscaVariable("PanPositionByte1", 0);
             _panPositionByte2 = new ViscaVariable("PanPositionByte2", 0);
@@ -366,8 +366,8 @@ namespace Visca
                 Visca.Category.PanTilt,
                 relative ? Visca.Commands.PanTiltRelative : Visca.Commands.PanTiltAbsolute,
             });
-            Append(_panSpeed);
-            Append(_tiltSpeed);
+            Append(this.PanSpeed);
+            Append(this.TiltSpeed);
             Append(_panPositionByte1);
             Append(_panPositionByte2);
             Append(_panPositionByte3);
@@ -425,7 +425,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} PTZ.{1} with PanSpeed:{2} TiltSpeed:{3} PanPosition:{4} TiltPosition:{5}", this.Destination, _relative ? "Relative" : "Absolute", _panSpeed.Value, _tiltSpeed.Value, PanPosition, TiltPosition);
+            return String.Format("Camera{0} PTZ.{1} with PanSpeed:{2} TiltSpeed:{3} PanPosition:{4} TiltPosition:{5}", this.Destination, _relative ? "Relative" : "Absolute", PanSpeed.Value, TiltSpeed.Value, PanPosition, TiltPosition);
         }
     }
    

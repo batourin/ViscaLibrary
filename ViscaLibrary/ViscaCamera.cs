@@ -173,12 +173,12 @@ namespace Visca
         public void Stop() { _visca.EnqueueCommand(_ptzStop); }
         public void Up() { _visca.EnqueueCommand(_ptzUp); }
         public void Down() { _visca.EnqueueCommand(_ptzDown); }
-        public void Left() { _visca.EnqueueCommand(_ptzStop); }
-        public void Right() { _visca.EnqueueCommand(_ptzStop); }
-        public void UpLeft() { _visca.EnqueueCommand(_ptzStop); }
-        public void UpRight() { _visca.EnqueueCommand(_ptzStop); }
-        public void DownLeft() { _visca.EnqueueCommand(_ptzStop); }
-        public void DownRight() { _visca.EnqueueCommand(_ptzStop); }
+        public void Left() { _visca.EnqueueCommand(_ptzLeft); }
+        public void Right() { _visca.EnqueueCommand(_ptzRight); }
+        public void UpLeft() { _visca.EnqueueCommand(_ptzUpLeft); }
+        public void UpRight() { _visca.EnqueueCommand(_ptzUpRight); }
+        public void DownLeft() { _visca.EnqueueCommand(_ptzDownLeft); }
+        public void DownRight() { _visca.EnqueueCommand(_ptzDownRight); }
 
         public void PositionAbsolute(int panPosition, int tiltPosition)
         {

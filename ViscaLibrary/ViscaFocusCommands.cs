@@ -80,7 +80,7 @@ namespace Visca
 
     public abstract class ViscaFocusSpeedCommand: ViscaCommand
     {
-        public ViscaFocusSpeed _focusSpeed { get; private set; }
+        public ViscaFocusSpeed FocusSpeed { get; private set; }
 
         public ViscaFocusSpeedCommand(byte address, byte focusOperation)
             : this(address, focusOperation, new ViscaFocusSpeed())
@@ -100,16 +100,16 @@ namespace Visca
                         )
                     );
 
-            _focusSpeed = focusSpeed;
+            this.FocusSpeed = focusSpeed;
 
             Append(new byte[]{
                 Visca.Category.Camera1,
                 Visca.Commands.Focus
             });
-            Append(focusOperation, _focusSpeed, Visca.HighByteMask);
+            Append(focusOperation, this.FocusSpeed, Visca.HighByteMask);
         }
 
-        public byte Speed { get { return _focusSpeed.Value; } }
+        public byte Speed { get { return FocusSpeed.Value; } }
     }
 
     public class ViscaFocusPosition: ViscaCommand
