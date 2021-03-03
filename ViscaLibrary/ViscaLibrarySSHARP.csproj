@@ -79,6 +79,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViscaCamera.cs" />
     <Compile Include="ViscaCamera.Focus.cs" />
+    <Compile Include="ViscaCamera.Power.cs" />
+    <Compile Include="ViscaCamera.PTZ.cs" />
+    <Compile Include="ViscaCamera.Zoom.cs" />
     <Compile Include="ViscaCameraParameters.cs" />
     <Compile Include="ViscaCommand.cs" />
     <Compile Include="ViscaConstants.cs" />
