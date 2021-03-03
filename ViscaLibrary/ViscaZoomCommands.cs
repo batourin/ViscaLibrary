@@ -87,7 +87,7 @@ namespace Visca
 
     public abstract class ViscaZoomSpeedCommand: ViscaCommand
     {
-        public ViscaZoomSpeed _zoomSpeed { get; private set; }
+        public ViscaZoomSpeed ZoomSpeed { get; private set; }
 
         public ViscaZoomSpeedCommand(byte address, byte zoomOperation)
             : this(address, zoomOperation, new ViscaZoomSpeed())
@@ -107,16 +107,16 @@ namespace Visca
                         )
                     );
 
-            _zoomSpeed = zoomSpeed.AttachCommand(this);
+            ZoomSpeed = zoomSpeed.AttachCommand(this);
 
             Append(new byte[]{
                 Visca.Category.Camera1,
                 Visca.Commands.Zoom
             });
-            Append(zoomOperation, _zoomSpeed, Visca.HighByteMask);
+            Append(zoomOperation, ZoomSpeed, Visca.HighByteMask);
         }
 
-        public byte Speed { get { return _zoomSpeed.Value; } }
+        public byte Speed { get { return ZoomSpeed.Value; } }
     }
 
     public class ViscaZoomTeleWithSpeed: ViscaZoomSpeedCommand
@@ -137,7 +137,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} Zoom.Tele with ZoomSpeed:{1}", this.Destination, _zoomSpeed.Value);
+            return String.Format("Camera{0} Zoom.Tele with ZoomSpeed:{1}", this.Destination, ZoomSpeed.Value);
         }
     }
    
@@ -159,7 +159,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} Zoom.Wide with ZoomSpeed:{1}", this.Destination, _zoomSpeed.Value);
+            return String.Format("Camera{0} Zoom.Wide with ZoomSpeed:{1}", this.Destination, ZoomSpeed.Value);
         }
     }
 
