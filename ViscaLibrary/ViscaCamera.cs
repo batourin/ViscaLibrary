@@ -6,7 +6,7 @@ using System.Text;
 namespace Visca
 {
 
-    public class ViscaCamera
+    public partial class ViscaCamera
     {
         private readonly ViscaCameraId _id;
         private readonly ViscaCameraParameters _parameters;
@@ -68,7 +68,7 @@ namespace Visca
 
             _powerOnCmd = new ViscaPower((byte)id, true);
             _powerOffCmd = new ViscaPower((byte)id, false);
-            _powerInquiry = new ViscaPowerInquiry((byte)id, new Action<bool>( power => { _power = power; OnPowerChanged(new PowerEventArgs(power)); }));
+            _powerInquiry = new ViscaPowerInquiry((byte)id, new Action<bool>( power => { _power = power; OnPowerChanged(new OnOffEventArgs(power)); }));
             _powerOnOffCmdReply = new Action<ViscaRxPacket>( rxPacket => { if ( rxPacket.IsCompletionCommand ) _visca.EnqueueCommand(_powerInquiry); } );
 
             _zoomStopCmd = new ViscaZoomStop((byte)id);
@@ -78,6 +78,23 @@ namespace Visca
             _zoomTeleWithSpeedCmd = new ViscaZoomTeleWithSpeed((byte)id, _zoomSpeed);
             _zoomWideWithSpeedCmd = new ViscaZoomWideWithSpeed((byte)id, _zoomSpeed);
             _zoomPositionCmd = new ViscaZoomPosition((byte)id, 0);
+
+            _focusStopCmd = new ViscaFocusStop((byte)id);
+            _focusFarCmd = new ViscaFocusFar((byte)id);
+            _focusNearCmd = new ViscaFocusNear((byte)id);
+            _focusSpeed = new ViscaFocusSpeed(_parameters.FocusSpeedLimits);
+            _focusFarWithSpeedCmd = new ViscaFocusFarWithSpeed((byte)id, _focusSpeed);
+            _focusNearWithSpeedCmd = new ViscaFocusNearWithSpeed((byte)id, _focusSpeed);
+            _focusPositionCmd = new ViscaFocusPosition((byte)id, 0);
+            _focusTriggerCmd = new ViscaFocusTrigger((byte)id);
+            _focusInfinityCmd = new ViscaFocusInfinity((byte)id);
+            _focusPositionInquiry = new ViscaFocusPositionInquiry((byte)id, new Action<int>(position => { _focusPosition = position; OnFocusPositionChanged(new PositionEventArgs(position)); }));
+            _focusAutoOnCmd = new ViscaFocusAutoOn((byte)id);
+            _focusAutoOffCmd = new ViscaFocusAutoOff((byte)id);
+            _focusAutoToggleCmd = new ViscaFocusAutoToggle((byte)id);
+            _focusAutoInquiry = new ViscaFocusAutoInquiry((byte)id, new Action<bool>(focusAuto => { _focusAuto = focusAuto; OnFocusAutoChanged(new OnOffEventArgs(focusAuto)); }));
+            _focusAutoOnOffCmdReply = new Action<ViscaRxPacket>(rxPacket => { if (rxPacket.IsCompletionCommand) _visca.EnqueueCommand(_focusAutoInquiry); });
+
 
             // PTZ Commands
             _ptzHome = new ViscaPTZHome((byte)id);
@@ -99,16 +116,11 @@ namespace Visca
 
         #region Power Commands Implementations
 
-        public class PowerEventArgs: EventArgs
-        {
-            public bool Power;
-            public PowerEventArgs(bool power) : base() { this.Power = power; }
-        }
-        public event EventHandler<PowerEventArgs> PowerChanged;
+        public event EventHandler<OnOffEventArgs> PowerChanged;
 
-        protected virtual void OnPowerChanged(PowerEventArgs e)
+        protected virtual void OnPowerChanged(OnOffEventArgs e)
         {
-            EventHandler<PowerEventArgs> handler = PowerChanged;
+            EventHandler<OnOffEventArgs> handler = PowerChanged;
             if(handler != null)
                 handler(this, e);
         }
@@ -148,6 +160,20 @@ namespace Visca
         public void ZoomPosition(int position) { _visca.EnqueueCommand(_zoomPositionCmd.SetPosition(position)); }
 
         #endregion Zoom Commands Implementations
+
+        public class PositionEventArgs : EventArgs
+        {
+            public int Position;
+            public PositionEventArgs(int position) : base() { this.Position = position; }
+        }
+
+        public class OnOffEventArgs : EventArgs
+        {
+            private readonly bool _value;
+            public bool On { get { return _value; } }
+            public bool Off { get { return !_value; } }
+            public OnOffEventArgs(bool value) : base() { _value = value; }
+        }
 
         #region PTZ Commands Implementations
 

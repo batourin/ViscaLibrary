@@ -112,6 +112,50 @@ namespace Visca
         public byte Speed { get { return FocusSpeed.Value; } }
     }
 
+    public class ViscaFocusFarWithSpeed : ViscaFocusSpeedCommand
+    {
+
+        public ViscaFocusFarWithSpeed(byte address)
+            : this(address, new ViscaFocusSpeed())
+        { }
+
+        public ViscaFocusFarWithSpeed(byte address, byte focusSpeed)
+            : this(address, new ViscaFocusSpeed(focusSpeed))
+        { }
+
+        public ViscaFocusFarWithSpeed(byte address, ViscaFocusSpeed focusSpeed)
+            : base(address, Visca.Commands.FocusCommands.FarWithSpeed, focusSpeed)
+        {
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} Focus.Far with FocusSpeed:{1}", this.Destination, FocusSpeed.Value);
+        }
+    }
+
+    public class ViscaFocusNearWithSpeed : ViscaFocusSpeedCommand
+    {
+
+        public ViscaFocusNearWithSpeed(byte address)
+            : this(address, new ViscaFocusSpeed())
+        { }
+
+        public ViscaFocusNearWithSpeed(byte address, byte focusSpeed)
+            : this(address, new ViscaFocusSpeed(focusSpeed))
+        { }
+
+        public ViscaFocusNearWithSpeed(byte address, ViscaFocusSpeed focusSpeed)
+            : base(address, Visca.Commands.FocusCommands.NearWithSpeed, focusSpeed)
+        {
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} Zoom.Wide with FocusSpeed:{1}", this.Destination, FocusSpeed.Value);
+        }
+    }
+
     public class ViscaFocusPosition: ViscaCommand
     {
  
@@ -207,5 +251,126 @@ namespace Visca
         }
     }
 
+    public class ViscaFocusAutoOn : ViscaCommand
+    {
+        public ViscaFocusAutoOn(byte address)
+        : base(address)
+        {
+            Append(new byte[]{
+                Visca.Category.Camera1,
+                Visca.Commands.FocusAuto,
+                Visca.Commands.FocusAutoCommands.On
+            });
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} Focus.Auto.On", this.Destination);
+        }
+    }
+
+    public class ViscaFocusAutoOff : ViscaCommand
+    {
+        public ViscaFocusAutoOff(byte address)
+        : base(address)
+        {
+            Append(new byte[]{
+                Visca.Category.Camera1,
+                Visca.Commands.FocusAuto,
+                Visca.Commands.FocusAutoCommands.Off
+            });
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} Focus.Auto.Off", this.Destination);
+        }
+    }
+
+    public class ViscaFocusAutoToggle : ViscaCommand
+    {
+        public ViscaFocusAutoToggle(byte address)
+        : base(address)
+        {
+            Append(new byte[]{
+                Visca.Category.Camera1,
+                Visca.Commands.FocusAuto,
+                Visca.Commands.FocusAutoCommands.Toggle
+            });
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} Focus.Auto.Toggle", this.Destination);
+        }
+    }
+
+    internal class ViscaFocusAutoInquiry : ViscaInquiry
+    {
+        private readonly Action<bool> _action;
+        public ViscaFocusAutoInquiry(byte address, Action<bool> action)
+        : base(address)
+        {
+            _action = action;
+
+            Append(new byte[]{
+                Visca.Category.Camera1,
+                Visca.Commands.FocusAuto
+            });
+        }
+
+        public override void Process(ViscaRxPacket viscaRxPacket)
+        {
+            if (_action != null)
+            {
+                if (viscaRxPacket.PayLoad[0] == 0x02)
+                    _action(true);
+                else if (viscaRxPacket.PayLoad[0] == 0x03)
+                    _action(false);
+            }
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} FocusAutoInquiry", this.Destination);
+        }
+    }
+
+    internal class ViscaFocusPositionInquiry : ViscaInquiry
+    {
+        private readonly Action<int> _action;
+        public ViscaFocusPositionInquiry(byte address, Action<int> action)
+        : base(address)
+        {
+            _action = action;
+
+            Append(new byte[]{
+                Visca.Category.Camera1,
+                Visca.Commands.FocusPosition
+            });
+        }
+
+        public override void Process(ViscaRxPacket viscaRxPacket)
+        {
+            if (_action != null)
+            {
+                if (viscaRxPacket.PayLoad.Length == 4)
+                {
+                    _action( (viscaRxPacket.PayLoad[0] << 12) +
+                             (viscaRxPacket.PayLoad[1] << 8) +
+                             (viscaRxPacket.PayLoad[1] << 4) +
+                              viscaRxPacket.PayLoad[1]
+                     );
+                }
+                else
+                    throw new ArgumentOutOfRangeException("viscaRxPacket", "Recieved packet is not Focus Position Inquiry");
+            }
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} FocusPositionInquiry", this.Destination);
+        }
+    }
 
 }

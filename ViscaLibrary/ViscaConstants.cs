@@ -101,6 +101,15 @@ namespace Visca
                 public const byte Trigger = 0x01;
                 public const byte Infinity = 0x02;
             }
+
+            public const byte FocusAuto = 0x38;
+            public static class FocusAutoCommands
+            {
+                public const byte On = 0x02;
+                public const byte Off = 0x03;
+                public const byte Toggle = 0x10;
+            }
+
             public const byte FocusPosition = 0x48;
 
             public const byte PanTilt = 0x01;

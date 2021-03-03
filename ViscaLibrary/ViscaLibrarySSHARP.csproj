@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViscaCamera.cs" />
+    <Compile Include="ViscaCamera.Focus.cs" />
     <Compile Include="ViscaCameraParameters.cs" />
     <Compile Include="ViscaCommand.cs" />
     <Compile Include="ViscaConstants.cs" />
