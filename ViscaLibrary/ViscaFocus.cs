@@ -156,65 +156,6 @@ namespace Visca
         }
     }
 
-    public class ViscaFocusPosition: ViscaCommand
-    {
- 
-        private readonly ViscaVariable _focusPositionByte1;
-        private readonly ViscaVariable _focusPositionByte2;
-        private readonly ViscaVariable _focusPositionByte3;
-        private readonly ViscaVariable _focusPositionByte4;
-
-        public ViscaFocusPosition(byte address, int focusPosition)
-            : base(address)
-        {
-            _focusPositionByte1 = new ViscaVariable("FocusPositionByte1", 0);
-            _focusPositionByte2 = new ViscaVariable("FocusPositionByte2", 0);
-            _focusPositionByte3 = new ViscaVariable("FocusPositionByte3", 0);
-            _focusPositionByte4 = new ViscaVariable("FocusPositionByte4", 0);
-
-            FocusPosition = focusPosition;
-
-            Append(new byte[]{
-                Visca.Category.Camera1,
-                Visca.Commands.FocusPosition
-            });
-            Append(_focusPositionByte1);
-            Append(_focusPositionByte2);
-            Append(_focusPositionByte3);
-            Append(_focusPositionByte4);
-        }
-
-        public int FocusPosition
-        {
-            get
-            {
-                return (_focusPositionByte1.Value << 12)
-                    +  (_focusPositionByte2.Value << 8)
-                    +  (_focusPositionByte3.Value << 4)
-                    +   _focusPositionByte4.Value;
-            }
-            set 
-            {
-                _focusPositionByte1.Value = (byte)((value & 0xF000) >> 12);
-                _focusPositionByte2.Value = (byte)((value & 0x0F00) >> 8);
-                _focusPositionByte3.Value = (byte)((value & 0x00F0) >> 4);
-                _focusPositionByte4.Value = (byte)((value & 0x000F) );
-            }
-        }
-
-        public ViscaFocusPosition SetPosition(int focusPosition)
-        {
-            FocusPosition = focusPosition;
-
-            return this;
-        }
-
-        public override string ToString()
-        {
-            return String.Format("Camera{0} FocusPosition:{1}", this.Destination, FocusPosition);
-        }
-    }
-
     public class ViscaFocusTrigger: ViscaCommand
     {
         public ViscaFocusTrigger(byte address)
@@ -248,6 +189,25 @@ namespace Visca
         public override string ToString()
         {
             return String.Format("Camera{0} Focus.Infinity", this.Destination) ;
+        }
+    }
+
+    public class ViscaFocusNearLimit : ViscaPositionCommand
+    {
+
+        public ViscaFocusNearLimit(byte address, int focusPosition)
+            : base(address, focusPosition)
+        {
+            Append(new byte[]{
+                Visca.Category.Camera1,
+                Visca.Commands.FocusNearLimit
+            });
+            AppendPosition();
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} Focus.NearLimit:{1}", this.Destination, Position);
         }
     }
 
@@ -318,7 +278,26 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} FocusAutoInquiry", this.Destination);
+            return String.Format("Camera{0} Focus.Auto.Inquiry", this.Destination);
+        }
+    }
+
+    public class ViscaFocusPosition : ViscaPositionCommand
+    {
+
+        public ViscaFocusPosition(byte address, int focusPosition)
+            : base(address, focusPosition)
+        {
+            Append(new byte[]{
+                Visca.Category.Camera1,
+                Visca.Commands.FocusPosition
+            });
+            AppendPosition();
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} Focus.Position:{1}", this.Destination, Position);
         }
     }
 
@@ -335,7 +314,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} FocusPositionInquiry", this.Destination);
+            return String.Format("Camera{0} Focus.Position.Inquiry", this.Destination);
         }
     }
 

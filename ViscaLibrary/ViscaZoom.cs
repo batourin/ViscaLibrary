@@ -163,62 +163,22 @@ namespace Visca
         }
     }
 
-    public class ViscaZoomPosition: ViscaCommand
+    public class ViscaZoomPosition: ViscaPositionCommand
     {
- 
-        private readonly ViscaVariable _zoomPositionByte1;
-        private readonly ViscaVariable _zoomPositionByte2;
-        private readonly ViscaVariable _zoomPositionByte3;
-        private readonly ViscaVariable _zoomPositionByte4;
 
         public ViscaZoomPosition(byte address, int zoomPosition)
-            : base(address)
+            : base(address, zoomPosition)
         {
-            _zoomPositionByte1 = new ViscaVariable("ZoomPositionByte1", 0);
-            _zoomPositionByte2 = new ViscaVariable("ZoomPositionByte2", 0);
-            _zoomPositionByte3 = new ViscaVariable("ZoomPositionByte3", 0);
-            _zoomPositionByte4 = new ViscaVariable("ZoomPositionByte4", 0);
-
-            ZoomPosition = zoomPosition;
-
             Append(new byte[]{
                 Visca.Category.Camera1,
                 Visca.Commands.ZoomPosition
             });
-            Append(_zoomPositionByte1);
-            Append(_zoomPositionByte2);
-            Append(_zoomPositionByte3);
-            Append(_zoomPositionByte4);
-        }
-
-        public int ZoomPosition
-        {
-            get
-            {
-                return (_zoomPositionByte1.Value << 12)
-                    +  (_zoomPositionByte2.Value << 8)
-                    +  (_zoomPositionByte3.Value << 4)
-                    +   _zoomPositionByte4.Value;
-            }
-            set 
-            {
-                _zoomPositionByte1.Value = (byte)((value & 0xF000) >> 12);
-                _zoomPositionByte2.Value = (byte)((value & 0x0F00) >> 8);
-                _zoomPositionByte3.Value = (byte)((value & 0x00F0) >> 4);
-                _zoomPositionByte4.Value = (byte)((value & 0x000F) );
-            }
-        }
-
-        public ViscaZoomPosition SetPosition(int zoomPosition)
-        {
-            ZoomPosition = zoomPosition;
-
-            return this;
+            AppendPosition();
         }
 
         public override string ToString()
         {
-            return String.Format("Camera{0} ZoomPosition:{1}", this.Destination, ZoomPosition);
+            return String.Format("Camera{0} Zoom.Position:{1}", this.Destination, Position);
         }
     }
 

@@ -59,16 +59,19 @@ namespace Visca
             _focusSpeed = new ViscaFocusSpeed(_parameters.FocusSpeedLimits);
             _focusFarWithSpeedCmd = new ViscaFocusFarWithSpeed((byte)id, _focusSpeed);
             _focusNearWithSpeedCmd = new ViscaFocusNearWithSpeed((byte)id, _focusSpeed);
-            _focusPositionCmd = new ViscaFocusPosition((byte)id, 0);
             _focusTriggerCmd = new ViscaFocusTrigger((byte)id);
             _focusInfinityCmd = new ViscaFocusInfinity((byte)id);
-            _focusPositionInquiry = new ViscaFocusPositionInquiry((byte)id, new Action<int>(position => { _focusPosition = position; OnFocusPositionChanged(new PositionEventArgs(position)); }));
+
+            _focusNearLimitCmd = new ViscaFocusNearLimit((byte)id, 0x1000);
+
             _focusAutoOnCmd = new ViscaFocusAutoOn((byte)id);
             _focusAutoOffCmd = new ViscaFocusAutoOff((byte)id);
             _focusAutoToggleCmd = new ViscaFocusAutoToggle((byte)id);
             _focusAutoInquiry = new ViscaFocusAutoInquiry((byte)id, new Action<bool>(focusAuto => { _focusAuto = focusAuto; OnFocusAutoChanged(new OnOffEventArgs(focusAuto)); }));
             _focusAutoOnOffCmdReply = new Action<ViscaRxPacket>(rxPacket => { if (rxPacket.IsCompletionCommand) _visca.EnqueueCommand(_focusAutoInquiry); });
 
+            _focusPositionCmd = new ViscaFocusPosition((byte)id, 0);
+            _focusPositionInquiry = new ViscaFocusPositionInquiry((byte)id, new Action<int>(position => { _focusPosition = position; OnFocusPositionChanged(new PositionEventArgs(position)); }));
 
             // PTZ Commands
             _ptzHome = new ViscaPTZHome((byte)id);

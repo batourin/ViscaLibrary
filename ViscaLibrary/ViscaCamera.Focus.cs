@@ -12,16 +12,18 @@ namespace Visca
         private readonly ViscaFocusSpeed _focusSpeed;
         private readonly ViscaFocusFarWithSpeed _focusFarWithSpeedCmd;
         private readonly ViscaFocusNearWithSpeed _focusNearWithSpeedCmd;
-        private readonly ViscaFocusPosition _focusPositionCmd;
         private readonly ViscaFocusTrigger _focusTriggerCmd;
         private readonly ViscaFocusInfinity _focusInfinityCmd;
-        private readonly ViscaFocusPositionInquiry _focusPositionInquiry;
+        private readonly ViscaFocusNearLimit _focusNearLimitCmd;
 
         private readonly ViscaFocusAutoOn _focusAutoOnCmd;
         private readonly ViscaFocusAutoOff _focusAutoOffCmd;
         private readonly ViscaFocusAutoToggle _focusAutoToggleCmd;
         private readonly ViscaFocusAutoInquiry _focusAutoInquiry;
         private readonly Action<ViscaRxPacket> _focusAutoOnOffCmdReply;
+
+        private readonly ViscaFocusPosition _focusPositionCmd;
+        private readonly ViscaFocusPositionInquiry _focusPositionInquiry;
 
         #endregion Focus Commands Definition
 
@@ -47,30 +49,10 @@ namespace Visca
         public void FocusFarWithSpeed() { _visca.EnqueueCommand(_focusFarWithSpeedCmd); }
         public void FocusNearWithSpeed() { _visca.EnqueueCommand(_focusNearWithSpeedCmd); }
 
-        public void FocusSetPosition(int position) { _visca.EnqueueCommand(_focusPositionCmd.SetPosition(position)); }
-
         public void FocusTrigger() { _visca.EnqueueCommand(_focusTriggerCmd); }
         public void FocusInfinity() { _visca.EnqueueCommand(_focusInfinityCmd); }
 
-        public event EventHandler<PositionEventArgs> FocusPositionChanged;
-
-        protected virtual void OnFocusPositionChanged(PositionEventArgs e)
-        {
-            EventHandler<PositionEventArgs> handler = FocusPositionChanged;
-            if (handler != null)
-                handler(this, e);
-        }
-
-        private int _focusPosition;
-        public int FocusPosition
-        {
-            get { return _focusPosition; }
-            set
-            {
-                _visca.EnqueueCommand(_focusPositionCmd.SetPosition(value));
-                _focusPosition = value;
-            }
-        }
+        public void FocusNearLimit(int position) { _visca.EnqueueCommand(_focusNearLimitCmd.SetPosition(position)); }
 
         public event EventHandler<OnOffEventArgs> FocusAutoChanged;
 
@@ -91,6 +73,28 @@ namespace Visca
                     _visca.EnqueueCommand(_focusAutoOnCmd, _focusAutoOnOffCmdReply);
                 else
                     _visca.EnqueueCommand(_focusAutoOffCmd, _focusAutoOnOffCmdReply);
+            }
+        }
+
+        public void FocusSetPosition(int position) { _visca.EnqueueCommand(_focusPositionCmd.SetPosition(position)); }
+
+        public event EventHandler<PositionEventArgs> FocusPositionChanged;
+
+        protected virtual void OnFocusPositionChanged(PositionEventArgs e)
+        {
+            EventHandler<PositionEventArgs> handler = FocusPositionChanged;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        private int _focusPosition;
+        public int FocusPosition
+        {
+            get { return _focusPosition; }
+            set
+            {
+                _visca.EnqueueCommand(_focusPositionCmd.SetPosition(value));
+                _focusPosition = value;
             }
         }
 

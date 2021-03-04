@@ -102,6 +102,8 @@ namespace Visca
                 public const byte Infinity = 0x02;
             }
 
+            public const byte FocusNearLimit = 0x28;
+
             public const byte FocusAuto = 0x38;
             public static class FocusAutoCommands
             {
