@@ -29,4 +29,5 @@ namespace Visca.Tests
             Assert.That(power.SequenceEqual(new byte[] { 0x81, 0x01, 0x04, 0x00, 0x03, 0xff }), Is.True, "Power.Off bytes sequence does not match expected");
         }
     }
+
 }
