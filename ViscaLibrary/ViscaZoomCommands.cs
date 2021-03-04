@@ -222,5 +222,21 @@ namespace Visca
         }
     }
 
- 
+    public class ViscaZoomPositionInquiry : ViscaPositionInquiry
+    {
+        public ViscaZoomPositionInquiry(byte address, Action<int> action)
+        : base(address, action)
+        {
+            Append(new byte[]{
+                Visca.Category.Camera1,
+                Visca.Commands.ZoomPosition
+            });
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} ZoomPositionInquiry", this.Destination);
+        }
+    }
+
 }

@@ -305,29 +305,15 @@ namespace Visca
         }
     }
 
-    internal class ViscaFocusAutoInquiry : ViscaInquiry
+    public class ViscaFocusAutoInquiry : ViscaOnOffInquiry
     {
-        private readonly Action<bool> _action;
         public ViscaFocusAutoInquiry(byte address, Action<bool> action)
-        : base(address)
+        : base(address, action)
         {
-            _action = action;
-
             Append(new byte[]{
                 Visca.Category.Camera1,
                 Visca.Commands.FocusAuto
             });
-        }
-
-        public override void Process(ViscaRxPacket viscaRxPacket)
-        {
-            if (_action != null)
-            {
-                if (viscaRxPacket.PayLoad[0] == 0x02)
-                    _action(true);
-                else if (viscaRxPacket.PayLoad[0] == 0x03)
-                    _action(false);
-            }
         }
 
         public override string ToString()
@@ -336,35 +322,15 @@ namespace Visca
         }
     }
 
-    internal class ViscaFocusPositionInquiry : ViscaInquiry
+    public class ViscaFocusPositionInquiry : ViscaPositionInquiry
     {
-        private readonly Action<int> _action;
         public ViscaFocusPositionInquiry(byte address, Action<int> action)
-        : base(address)
+        : base(address, action)
         {
-            _action = action;
-
             Append(new byte[]{
                 Visca.Category.Camera1,
                 Visca.Commands.FocusPosition
             });
-        }
-
-        public override void Process(ViscaRxPacket viscaRxPacket)
-        {
-            if (_action != null)
-            {
-                if (viscaRxPacket.PayLoad.Length == 4)
-                {
-                    _action( (viscaRxPacket.PayLoad[0] << 12) +
-                             (viscaRxPacket.PayLoad[1] << 8) +
-                             (viscaRxPacket.PayLoad[1] << 4) +
-                              viscaRxPacket.PayLoad[1]
-                     );
-                }
-                else
-                    throw new ArgumentOutOfRangeException("viscaRxPacket", "Recieved packet is not Focus Position Inquiry");
-            }
         }
 
         public override string ToString()
