@@ -52,6 +52,7 @@ namespace Visca
             _zoomTeleWithSpeedCmd = new ViscaZoomTeleWithSpeed((byte)id, _zoomSpeed);
             _zoomWideWithSpeedCmd = new ViscaZoomWideWithSpeed((byte)id, _zoomSpeed);
             _zoomPositionCmd = new ViscaZoomPosition((byte)id, 0);
+            _zoomPositionInquiry = new ViscaZoomPositionInquiry((byte)id, new Action<int>(position => { _zoomPosition = position; OnZoomPositionChanged(new PositionEventArgs(position)); }));
 
             _focusStopCmd = new ViscaFocusStop((byte)id);
             _focusFarCmd = new ViscaFocusFar((byte)id);
