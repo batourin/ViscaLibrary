@@ -49,4 +49,13 @@ namespace Visca
         {
         }
     }
+
+    public static class ViscaDefaults
+    {
+        /// <summary>
+        /// Visca defaults to 6 presets
+        /// </summary>
+        public static IViscaRangeLimits<byte> ViscaDefaultPresetLimits = new ViscaRangeLimits<byte>(0x00, 0x05, "Preset should be in range 0 to 5");
+    }
+
 }
