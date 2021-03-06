@@ -60,7 +60,6 @@ namespace Visca
     {
 
         private const byte _defaultSpeed = 0x04;
-        private ViscaZoomSpeedCommand _zoomSpeedCommand;
 
         public ViscaZoomSpeed()
             : this(_defaultSpeed, new ViscaDefaultZoomSpeedLimits())
@@ -76,12 +75,6 @@ namespace Visca
         public ViscaZoomSpeed(byte value, ViscaRangeLimits<byte> limits)
             : base("ZoomSpeed", value, limits)
         {
-        }
-
-        public ViscaZoomSpeed AttachCommand(ViscaZoomSpeedCommand zoomSpeedCommand)
-        {
-            _zoomSpeedCommand = zoomSpeedCommand;
-            return this;
         }
     }
 
@@ -107,7 +100,7 @@ namespace Visca
                         )
                     );
 
-            ZoomSpeed = zoomSpeed.AttachCommand(this);
+            this.ZoomSpeed = zoomSpeed;
 
             Append(new byte[]{
                 Visca.Category.Camera1,
