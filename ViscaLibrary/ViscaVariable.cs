@@ -57,11 +57,32 @@ namespace Visca
         }
     }
 
+    public interface IViscaRangeLimits<T>
+    {
+        T Low { get; }
+        T High { get; }
+        string Message { get; }
+    }
+
+    public class ViscaRangeLimits<T> : IViscaRangeLimits<T>
+    {
+        public T Low { get; private set; }
+        public T High { get; private set; }
+        public string Message { get; private set; }
+
+        public ViscaRangeLimits(T low, T high, string message)
+        {
+            Low = low;
+            High = high;
+            Message = message;
+        }
+    }
+
     public class ViscaVariableWithLimits: ViscaVariable
     {
-        private ViscaRangeLimits<byte> _limits;
+        private IViscaRangeLimits<byte> _limits;
     
-        public ViscaVariableWithLimits(string name, byte value, ViscaRangeLimits<byte> limits)
+        public ViscaVariableWithLimits(string name, byte value, IViscaRangeLimits<byte> limits)
             :base(name, value)
         {
             _limits = limits;
