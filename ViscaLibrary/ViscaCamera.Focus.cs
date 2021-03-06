@@ -76,6 +76,8 @@ namespace Visca
             }
         }
 
+        public void FocusAutoToggle() { _visca.EnqueueCommand(_focusAutoToggleCmd); }
+
         public void FocusSetPosition(int position) { _visca.EnqueueCommand(_focusPositionCmd.SetPosition(position)); }
 
         public event EventHandler<PositionEventArgs> FocusPositionChanged;
