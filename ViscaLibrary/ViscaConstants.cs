@@ -28,7 +28,7 @@ namespace Visca
         NotExecutable = 0x41
     }
 
-    public static class Visca
+    public static partial class Visca
     {
         public const byte Command = 0x01;
         public const byte Inquiry = 0x09;
@@ -66,7 +66,7 @@ namespace Visca
             public const ushort IX47X = 0x0401;
         }
 
-        public static class Commands
+        public static partial class Commands
         {
             public const byte Power = 0x00;
             public static class PowerCommands
@@ -113,6 +113,15 @@ namespace Visca
             }
 
             public const byte FocusPosition = 0x48;
+
+            public const byte Memory = 0x3F;
+            public static class MemoryCommands
+            {
+                public const byte Reset = 0x00;
+                public const byte Set = 0x01;
+                public const byte Recall = 0x02;
+                public const byte Preset1 = 0x01;
+            }
 
             public const byte PanTilt = 0x01;
             public static class PanTiltCommands
