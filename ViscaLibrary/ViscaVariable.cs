@@ -80,7 +80,7 @@ namespace Visca
 
     public class ViscaVariableWithLimits: ViscaVariable
     {
-        private IViscaRangeLimits<byte> _limits;
+        private readonly IViscaRangeLimits<byte> _limits;
     
         public ViscaVariableWithLimits(string name, byte value, IViscaRangeLimits<byte> limits)
             :base(name, value)
