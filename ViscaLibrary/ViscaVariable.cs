@@ -98,7 +98,7 @@ namespace Visca
         {
             if(value < _limits.Low || value > _limits.High)
             {
-                throw new ArgumentOutOfRangeException(Name, String.Format("{0} should be in range of 0x{1:X2} to 0x{2:X2}}.", Name, _limits.Low, _limits.High));
+                throw new ArgumentOutOfRangeException(Name, String.Format("{0} should be in range from 0x{1:X2} to 0x{2:X2}.", Name, _limits.Low, _limits.High));
             }
             return true;
         }
