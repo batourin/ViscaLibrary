@@ -77,23 +77,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViscaCamera.cs" />
-    <Compile Include="ViscaCamera.Focus.cs" />
-    <Compile Include="ViscaCamera.Power.cs" />
-    <Compile Include="ViscaCamera.PTZ.cs" />
-    <Compile Include="ViscaCamera.Zoom.cs" />
-    <Compile Include="ViscaCameraParameters.cs" />
+    <Compile Include="Camera\ViscaCamera.cs" />
+    <Compile Include="Camera\ViscaCamera.Focus.cs" />
+    <Compile Include="Camera\ViscaCamera.Power.cs" />
+    <Compile Include="Camera\ViscaCamera.PTZ.cs" />
+    <Compile Include="Camera\ViscaCamera.Zoom.cs" />
+    <Compile Include="Camera\ViscaCameraParameters.cs" />
+    <Compile Include="Vaddio\ViscaConstantsVaddio.cs" />
+    <Compile Include="Vaddio\ViscaDefaultsVaddio.cs" />
+    <Compile Include="Vaddio\ViscaMemoryVaddio.cs" />
     <Compile Include="ViscaCommand.cs" />
     <Compile Include="ViscaConstants.cs" />
-    <Compile Include="ViscaFocusCommands.cs" />
+    <Compile Include="ViscaDefaults.cs" />
+    <Compile Include="ViscaFocus.cs" />
     <Compile Include="ViscaInquiry.cs" />
+    <Compile Include="ViscaMemory.cs" />
     <Compile Include="ViscaPacket.cs" />
+    <Compile Include="ViscaPower.cs" />
     <Compile Include="ViscaProtocolProcessor.cs" />
-    <Compile Include="ViscaPTZCommands.cs" />
+    <Compile Include="ViscaPTZ.cs" />
     <Compile Include="ViscaRxPacket.cs" />
     <Compile Include="ViscaTxPacket.cs" />
     <Compile Include="ViscaVariable.cs" />
-    <Compile Include="ViscaZoomCommands.cs" />
+    <Compile Include="ViscaWB.cs" />
+    <Compile Include="ViscaZoom.cs" />
     <None Include="Properties\ControlSystem.cfg" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
