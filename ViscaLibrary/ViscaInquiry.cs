@@ -13,6 +13,24 @@ namespace Visca
         public abstract void Process(ViscaRxPacket viscaRxPacket);
     }
 
+    public abstract class ViscaValueInquiry : ViscaInquiry
+    {
+        private readonly Action<byte> _action;
+        public ViscaValueInquiry(byte address, Action<byte> action)
+        : base(address)
+        {
+            _action = action;
+        }
+
+        public override void Process(ViscaRxPacket viscaRxPacket)
+        {
+            if (_action != null)
+            {
+                _action(viscaRxPacket.PayLoad[0]);
+            }
+        }
+    }
+
     public abstract class ViscaOnOffInquiry: ViscaInquiry
     {
         private readonly Action<bool> _action;

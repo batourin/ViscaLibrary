@@ -55,10 +55,9 @@ namespace Visca.Tests
         [Test]
         public async Task Power_OnWithFeedback()
         {
-            bool power = false;
             ViscaPower powerOnCmd = new ViscaPower(id, true);
-            ViscaPower powerOffCmd = new ViscaPower(id, false);
-            ViscaPowerInquiry powerInquiry = new ViscaPowerInquiry(id, new Action<bool>( p => { power = p; Console.WriteLine("Event: power: {0}", p); }));
+            bool power = false;
+            ViscaPowerInquiry powerInquiry = new ViscaPowerInquiry(id, new Action<bool>(p => { power = p; Console.WriteLine("Event: power: {0}", p); }));
             Action<ViscaRxPacket> powerOnOffCmdReply = new Action<ViscaRxPacket>(rxPacket => { if (rxPacket.IsCompletionCommand) visca.EnqueueCommand(powerInquiry); });
 
             visca.EnqueueCommand(powerOnCmd, powerOnOffCmdReply);
@@ -163,7 +162,7 @@ namespace Visca.Tests
 
             int panPosition = 0;
             int tiltPosition = 0;
-            ViscaPTZPositionInquiry ptzPositionInquiry = new ViscaPTZPositionInquiry(id, new Action<int, int>( (pan, tilt) => { panPosition = pan; tiltPosition = tilt;  Console.WriteLine("Event: position: pan: 0x{0:X4} ({0}), tilt: 0x{1:X4} ({1})", pan, tilt); }));
+            ViscaPTZPositionInquiry ptzPositionInquiry = new ViscaPTZPositionInquiry(id, new Action<int, int>((pan, tilt) => { panPosition = pan; tiltPosition = tilt; Console.WriteLine("Event: position: pan: 0x{0:X4} ({0}), tilt: 0x{1:X4} ({1})", pan, tilt); }));
             visca.EnqueueCommand(ptzPositionInquiry);
 
             Assert.That(sendQueue.TryTake(out byte[] ptzPositionInquiryPacket, 100), Is.True, "Timeout on sending data for PTZ Position Inquiry command");
@@ -200,6 +199,24 @@ namespace Visca.Tests
 
             // Respond Completion
             visca.ProcessIncomingData(new byte[] { 0x90, 0x50, 0xFF });
+        }
+
+        [Test]
+        public async Task WBInquiry()
+        {
+            WB wbMode = WB.Auto;
+            ViscaWBInquiry wbInquiry = new ViscaWBInquiry(id, new Action<WB>( wb => { wbMode = wb; Console.WriteLine("Event: WB Mode: {0}", wb); }));
+            visca.EnqueueCommand(wbInquiry);
+
+            Assert.That(sendQueue.TryTake(out byte[] wbInquiryPacket, 100), Is.True, "Timeout on sending data for WB Inquiry command");
+            Assert.That(wbInquiryPacket.SequenceEqual(new byte[] { 0x81, 0x09, 0x04, 0x35, 0xff }), Is.True, "WB Inquiry bytes sequence does not match expected");
+
+            // Respond WB mode Manual
+            visca.ProcessIncomingData(new byte[] { 0x90, 0x50, 0x05, 0xFF });
+            await Task.Delay(100);
+
+            wbMode.Should().Be(WB.Manual);
+
         }
     }
 }

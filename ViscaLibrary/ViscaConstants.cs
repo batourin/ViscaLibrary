@@ -5,6 +5,41 @@ using System.Text;
 
 namespace Visca
 {
+    using System.Collections.ObjectModel;
+    public abstract class EnumBaseType<T> where T : EnumBaseType<T>
+    {
+        protected static List<T> enumValues = new List<T>();
+
+        public readonly int Key;
+        public readonly string Value;
+
+        public EnumBaseType(int key, string value)
+        {
+            Key = key;
+            Value = value;
+            enumValues.Add((T)this);
+        }
+
+        protected static ReadOnlyCollection<T> GetBaseValues()
+        {
+            return enumValues.AsReadOnly();
+        }
+
+        protected static T GetBaseByKey(int key)
+        {
+            foreach (T t in enumValues)
+            {
+                if (t.Key == key) return t;
+            }
+            return null;
+        }
+
+        public override string ToString()
+        {
+            return Value;
+        }
+    }
+
     public enum ViscaCameraId : byte
     {
         Camera1 = 0x01,
@@ -103,6 +138,17 @@ namespace Visca
             }
 
             public const byte FocusNearLimit = 0x28;
+
+            public const byte WB = 0x35;
+            public static class WBCommands
+            {
+                public const byte Auto = 0x00;
+                public const byte Indoor = 0x01;
+                public const byte Outdoor = 0x02;
+                public const byte OnePush = 0x03;
+                public const byte ATW = 0x04;
+                public const byte Manual = 0x05;
+            }
 
             public const byte FocusAuto = 0x38;
             public static class FocusAutoCommands
