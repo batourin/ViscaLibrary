@@ -12,7 +12,7 @@ namespace Visca
         public static readonly WB ATW = new WB(Visca.Commands.WBCommands.ATW, "ATW");
         public static readonly WB Manual = new WB(Visca.Commands.WBCommands.Manual, "Manual");
 
-        public WB(int key, string value) : base(key, value)
+        public WB(byte key, string value) : base(key, value)
         {
         }
 
@@ -21,7 +21,7 @@ namespace Visca
             return GetBaseValues();
         }
 
-        public static WB GetByKey(int key)
+        public static WB GetByKey(byte key)
         {
             return GetBaseByKey(key);
         }
@@ -34,7 +34,7 @@ namespace Visca
         public ViscaWBMode(byte address, WB mode)
             : base(address)
         {
-            _mode = new ViscaVariable("WB Modea", (byte)mode.Key);
+            _mode = new ViscaVariable("WB Modea", mode.Key);
 
             Append(new byte[]{
                 Visca.Category.Camera1,
@@ -46,7 +46,7 @@ namespace Visca
         public WB Mode
         {
             get { return WB.GetByKey(_mode.Value); }
-            set { _mode.Value = (byte)value.Key; }
+            set { _mode.Value = value.Key; }
         }
 
         /// <summary>

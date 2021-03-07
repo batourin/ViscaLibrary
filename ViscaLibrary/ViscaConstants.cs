@@ -9,10 +9,10 @@ namespace Visca
     {
         protected static List<T> enumValues = new List<T>();
 
-        public readonly int Key;
+        public readonly byte Key;
         public readonly string Value;
 
-        public EnumBaseType(int key, string value)
+        public EnumBaseType(byte key, string value)
         {
             Key = key;
             Value = value;
