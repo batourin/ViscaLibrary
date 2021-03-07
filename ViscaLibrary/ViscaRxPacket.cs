@@ -12,7 +12,8 @@ namespace Visca
         {
             if(data == null)
                 throw new ArgumentNullException("data", "ViscaRxPacket data can not be null");
-            PayLoad = new PayLoadIndexer(_bytes.Length - 2, getPayload);
+            // Length is deduct address byte, completion (0x50) byte and termination (0xff) byte
+            PayLoad = new PayLoadIndexer(_bytes.Length - 3, getPayload);
         }
 
         public bool IsAck
