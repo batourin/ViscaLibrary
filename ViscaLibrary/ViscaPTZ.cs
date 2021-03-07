@@ -428,5 +428,30 @@ namespace Visca
             return String.Format("Camera{0} PTZ.{1} with PanSpeed:{2} TiltSpeed:{3} PanPosition:{4} TiltPosition:{5}", this.Destination, _relative ? "Relative" : "Absolute", PanSpeed.Value, TiltSpeed.Value, PanPosition, TiltPosition);
         }
     }
-   
+
+    /// <summary>
+    /// PTZ Position Inquiry
+    /// </summary>
+    public class ViscaPTZPositionInquiry : Visca2DPositionInquiry
+    {
+        /// <summary>
+        /// Constructor for PTZ Position Inquiry
+        /// </summary>
+        /// <param name="address">camera address</param>
+        /// <param name="action"> action to be called with two int parameters: pan position and tilt position</param>
+        public ViscaPTZPositionInquiry(byte address, Action<int, int> action)
+        : base(address, action)
+        {
+            Append(new byte[]{
+                Visca.Category.PanTilt,
+                Visca.Commands.PanTiltInquiry
+            });
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} PTZ.Position.Inquiry", this.Destination);
+        }
+    }
+
 }

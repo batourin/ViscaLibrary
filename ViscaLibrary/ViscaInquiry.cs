@@ -49,14 +49,45 @@ namespace Visca
             {
                 if (viscaRxPacket.PayLoad.Length == 4)
                 {
-                    _action((viscaRxPacket.PayLoad[0] << 12) +
+                    _action( (viscaRxPacket.PayLoad[0] << 12) +
                              (viscaRxPacket.PayLoad[1] << 8) +
-                             (viscaRxPacket.PayLoad[1] << 4) +
-                              viscaRxPacket.PayLoad[1]
+                             (viscaRxPacket.PayLoad[2] << 4) +
+                              viscaRxPacket.PayLoad[3]
                      );
                 }
                 else
                     throw new ArgumentOutOfRangeException("viscaRxPacket", "Recieved packet is not Position Inquiry");
+            }
+        }
+    }
+    public abstract class Visca2DPositionInquiry : ViscaInquiry
+    {
+        private readonly Action<int, int> _action;
+        public Visca2DPositionInquiry(byte address, Action<int, int> action)
+        : base(address)
+        {
+            _action = action;
+        }
+
+        public override void Process(ViscaRxPacket viscaRxPacket)
+        {
+            if (_action != null)
+            {
+                if (viscaRxPacket.PayLoad.Length == 8)
+                {
+                    _action(
+                            (viscaRxPacket.PayLoad[0] << 12) +
+                            (viscaRxPacket.PayLoad[1] << 8) +
+                            (viscaRxPacket.PayLoad[2] << 4) +
+                             viscaRxPacket.PayLoad[3],
+                            (viscaRxPacket.PayLoad[4] << 12) +
+                            (viscaRxPacket.PayLoad[5] << 8) +
+                            (viscaRxPacket.PayLoad[6] << 4) +
+                             viscaRxPacket.PayLoad[7]
+                     );
+                }
+                else
+                    throw new ArgumentOutOfRangeException("viscaRxPacket", "Recieved packet is not 2D Position Inquiry");
             }
         }
     }

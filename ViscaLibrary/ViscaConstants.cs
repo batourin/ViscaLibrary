@@ -137,6 +137,7 @@ namespace Visca
             public const byte PanTiltAbsolute = 0x02;
             public const byte PanTiltRelative = 0x03;
             public const byte PanTiltHome = 0x04;
+            public const byte PanTiltInquiry = 0x12;
         }
 
     }
