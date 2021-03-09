@@ -263,6 +263,12 @@ namespace Visca
 
             #endregion ExpComp
 
+            #region BackLight 0x33
+
+            public const byte BackLight = 0x33;
+
+            #endregion BackLight
+
             #region WB 0x35
 
             public const byte WB = 0x35;

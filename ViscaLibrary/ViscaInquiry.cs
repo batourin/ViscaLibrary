@@ -44,9 +44,9 @@ namespace Visca
         {
             if (_action != null)
             {
-                if (viscaRxPacket.PayLoad[0] == 0x02)
+                if (viscaRxPacket.PayLoad[0] == Visca.On)
                     _action(true);
-                else if (viscaRxPacket.PayLoad[0] == 0x03)
+                else if (viscaRxPacket.PayLoad[0] == Visca.Off)
                     _action(false);
             }
         }
