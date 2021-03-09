@@ -302,6 +302,12 @@ namespace Visca
 
             #endregion AE
 
+            #region WideDynamic 0x3d
+
+            public const byte WideDynamic = 0x3d;
+
+            #endregion BackLight
+
             #region Memory 0x3f
 
             public const byte Memory = 0x3F;
