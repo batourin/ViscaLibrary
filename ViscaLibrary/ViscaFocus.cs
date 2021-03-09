@@ -219,7 +219,7 @@ namespace Visca
             Append(new byte[]{
                 Visca.Category.Camera1,
                 Visca.Commands.FocusAuto,
-                Visca.Commands.FocusAutoCommands.On
+                Visca.Commands.FocusAutoMode.On
             });
         }
 
@@ -237,7 +237,7 @@ namespace Visca
             Append(new byte[]{
                 Visca.Category.Camera1,
                 Visca.Commands.FocusAuto,
-                Visca.Commands.FocusAutoCommands.Off
+                Visca.Commands.FocusAutoMode.Off
             });
         }
 
@@ -255,7 +255,7 @@ namespace Visca
             Append(new byte[]{
                 Visca.Category.Camera1,
                 Visca.Commands.FocusAuto,
-                Visca.Commands.FocusAutoCommands.Toggle
+                Visca.Commands.FocusAutoMode.Toggle
             });
         }
 

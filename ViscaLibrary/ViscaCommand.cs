@@ -2,6 +2,10 @@ using System;
 
 namespace Visca
 {
+    /// <summary>
+    /// Base class for all Visca command type messages
+    /// It always start with 0x01 byte in the second position after address
+    /// </summary>
     public class ViscaCommand: ViscaTxPacket
     {
         public ViscaCommand(byte address)
@@ -11,6 +15,10 @@ namespace Visca
         }
     }
 
+    /// <summary>
+    /// Base class to handle Visca comand with position variable
+    /// split into 4 low bytes
+    /// </summary>
     public abstract class ViscaPositionCommand: ViscaCommand
     {
 
@@ -63,4 +71,65 @@ namespace Visca
         }
     }
 
+    /// <summary>
+    /// Class representing Visca Command that normally set up one of the aspects of
+    /// camera operations mode, i.e. White Balance modes, Automatic Exposure modes, etc 
+    /// </summary>
+    /// <typeparam name="T"><code>EnumBaseType<T></code> type pseudo enumeration
+    /// representing possible command parameter</typeparam>
+    /// <example>
+    /// <code>
+    /// ViscaMode<TestMode> testCmd = new ViscaMode<TestMode>(
+    ///                1,
+    ///                new byte[]{
+    ///                Visca.Category.Camera1,
+    ///                Visca.Commands.AE
+    ///                },
+    ///                "AETest",
+    ///                TestMode.Manual);
+    /// </code>
+    /// </example>
+    public class ViscaModeCommand<T> : ViscaCommand where T : EnumBaseType<T>
+    {
+        private readonly ViscaVariable _mode;
+        private readonly string _commandName;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="address">Camera address</param>
+        /// <param name="commands">Command's Category and Command</param>
+        /// <param name="commandName">String representation of the command</param>
+        /// <param name="mode">Mode to set</param>
+        public ViscaModeCommand(byte address, byte[] commands, string commandName, T mode)
+            :base(address)
+        {
+            _commandName = commandName;
+            _mode = new ViscaVariable(_commandName + " Mode", mode.Key);
+
+            Append(commands);
+            Append(_mode);
+        }
+        public T Mode
+        {
+            get { return EnumBaseType<T>.GetByKey(_mode.Value); }
+            set { _mode.Value = value.Key; }
+        }
+
+        /// <summary>
+        /// Passthrough setter of mode suitable to enqueue command in one operation
+        /// </summary>
+        /// <param name="mode">Mode to set</param>
+        /// <returns>Same object</returns>
+        public ViscaModeCommand<T> SetMode(T mode)
+        {
+            Mode = mode;
+            return this;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} {1} set to {2}", this.Destination, _commandName, EnumBaseType<T>.GetByKey(_mode.Value));
+        }
+    }
 }

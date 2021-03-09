@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using System.Collections.ObjectModel;
 
 namespace Visca.Tests
 {
@@ -202,10 +203,37 @@ namespace Visca.Tests
         }
 
         [Test]
+        public void ModeCommandTest()
+        {
+            ViscaModeCommand<WBMode> viscaModeCmd = new ViscaModeCommand<WBMode>(
+                1,
+                new byte[]{
+                    Visca.Category.Camera1,
+                    Visca.Commands.WB
+                },
+                "WB",
+                PolyWBMode.Table);
+
+            viscaModeCmd.Mode.Should().Equals(PolyWBMode.Table);
+
+            viscaModeCmd.Mode = PolyWBMode.Indoor;
+
+            viscaModeCmd.Mode.Should().Equals(PolyWBMode.Indoor);
+
+            visca.EnqueueCommand(viscaModeCmd.SetMode(PolyWBMode.Table));
+
+            Assert.That(sendQueue.TryTake(out byte[] testPacket, 100), Is.True, "Timeout on sending data for ViscaModeCommand<WBMode>");
+            Assert.That(testPacket.SequenceEqual(new byte[] { 0x81, 0x01, 0x04, 0x35, 0x06, 0xff }), Is.True, "ViscaModeCommand<WBMode> with PolyWBMode.Table bytes sequence does not match expected");
+
+            // Respond Completion
+            visca.ProcessIncomingData(new byte[] { 0x90, 0x50, 0xFF });
+        }
+
+        [Test]
         public async Task WBInquiry()
         {
-            WB wbMode = WB.Auto;
-            ViscaWBInquiry wbInquiry = new ViscaWBInquiry(id, new Action<WB>( wb => { wbMode = wb; Console.WriteLine("Event: WB Mode: {0}", wb); }));
+            WBMode wbMode = WBMode.Auto;
+            ViscaWBInquiry wbInquiry = new ViscaWBInquiry(id, new Action<WBMode>( wb => { wbMode = wb; Console.WriteLine("Event: WB Mode: {0}", wb); }));
             visca.EnqueueCommand(wbInquiry);
 
             Assert.That(sendQueue.TryTake(out byte[] wbInquiryPacket, 100), Is.True, "Timeout on sending data for WB Inquiry command");
@@ -215,7 +243,7 @@ namespace Visca.Tests
             visca.ProcessIncomingData(new byte[] { 0x90, 0x50, 0x05, 0xFF });
             await Task.Delay(100);
 
-            wbMode.Should().Be(WB.Manual);
+            wbMode.Should().Be(WBMode.Manual);
 
         }
     }

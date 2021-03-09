@@ -5,6 +5,18 @@ using System.Collections.Generic;
 namespace Visca
 {
     using System.Collections.ObjectModel;
+    /// <summary>
+    /// Base psedo Enumeration type, supports exapndability by derived classes.
+    /// </summary>
+    /// <remarks>
+    /// Base psedo Enumeration type, supports exapndability by derived classes.
+    /// Useful when vendor expands possible values in the list of Visca
+    /// pre-defined ones. I.e. Polycom adds 0x06 value for WB options
+    /// 
+    /// Inspired and copied from the code of Cassio Mosqueira
+    /// https://www.codeproject.com/Articles/20805/Enhancing-C-Enums
+    /// </remarks>
+    /// <typeparam name="T"></typeparam>
     public abstract class EnumBaseType<T> where T : EnumBaseType<T>
     {
         protected static List<T> enumValues = new List<T>();
@@ -24,13 +36,18 @@ namespace Visca
             return enumValues.AsReadOnly();
         }
 
-        protected static T GetBaseByKey(int key)
+        protected static T GetBaseByKey(byte key)
         {
             foreach (T t in enumValues)
             {
                 if (t.Key == key) return t;
             }
             return null;
+        }
+
+        public static T GetByKey(byte key)
+        {
+            return GetBaseByKey(key);
         }
 
         public override string ToString()
@@ -139,7 +156,7 @@ namespace Visca
             public const byte FocusNearLimit = 0x28;
 
             public const byte WB = 0x35;
-            public static class WBCommands
+            public static class WBMode
             {
                 public const byte Auto = 0x00;
                 public const byte Indoor = 0x01;
@@ -150,11 +167,25 @@ namespace Visca
             }
 
             public const byte FocusAuto = 0x38;
-            public static class FocusAutoCommands
+            public static class FocusAutoMode
             {
                 public const byte On = 0x02;
                 public const byte Off = 0x03;
                 public const byte Toggle = 0x10;
+            }
+
+            public const byte AE = 0x39;
+            public static class AEMode
+            {
+                public const byte FullAuto = 0x00;
+                public const byte Manual = 0x03;
+                public const byte ShutterPriority = 0x0A;
+                public const byte IrisPriority = 0x0B;
+                public const byte GainPriority = 0x0C;
+                public const byte Bright = 0x0D;
+                public const byte ShutterAuto = 0x1A;
+                public const byte IrisAuto = 0x1B;
+                public const byte GainAuto = 0x1C;
             }
 
             public const byte FocusPosition = 0x48;
