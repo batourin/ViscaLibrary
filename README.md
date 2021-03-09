@@ -1,5 +1,5 @@
 # ViscaLibrary
-Implementation of VISCA protocol in C#  as Library
+Implementation of VISCA serial protocol in C# as .NET Library
 
 ## Table of contents
 * [General info](#general-info)
