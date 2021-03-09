@@ -56,6 +56,34 @@ namespace Visca
         }
     }
 
+    public class OnOffMode : EnumBaseType<OnOffMode>
+    {
+        public static readonly UpDownMode On = new UpDownMode(Visca.On, "On");
+        public static readonly UpDownMode Off = new UpDownMode(Visca.Off, "Off");
+
+        public OnOffMode(byte key, string value) : base(key, value)
+        { }
+    }
+
+    public class AutoManualMode : EnumBaseType<AutoManualMode>
+    {
+        public static readonly UpDownMode Auto = new UpDownMode(Visca.Auto, "Reset");
+        public static readonly UpDownMode Manual = new UpDownMode(Visca.Manual, "Manual");
+
+        public AutoManualMode(byte key, string value) : base(key, value)
+        { }
+    }
+
+    public class UpDownMode : EnumBaseType<UpDownMode>
+    {
+        public static readonly UpDownMode Reset = new UpDownMode(Visca.Reset, "Reset");
+        public static readonly UpDownMode Up = new UpDownMode(Visca.Up, "Up");
+        public static readonly UpDownMode Down = new UpDownMode(Visca.Down, "Down");
+
+        public UpDownMode(byte key, string value) : base(key, value)
+        { }
+    }
+
     public enum ViscaCameraId : byte
     {
         Camera1 = 0x01,
@@ -89,11 +117,19 @@ namespace Visca
         public const byte LowByteMask = 0x0F;
         public const byte HighByteMask = 0xF0;
 
-		/// <summary>
-		/// Timeout in milliseconds to ether acknoweledge command 
+        public const byte Reset = 0x00;
+        public const byte On = 0x02;
+        public const byte Off = 0x03;
+        public const byte Auto = 0x02;
+        public const byte Manual = 0x03;
+        public const byte Up = 0x02;
+        public const byte Down = 0x03;
+
+        /// <summary>
+        /// Timeout in milliseconds to ether acknoweledge command 
         /// (ACK, Completion) or response to Inquiry
-		/// </summary>
-		/// <remarks>
+        /// </summary>
+        /// <remarks>
         /// Per Visca specifications 16.7 (20msec*PAL) of 1 Vertical
         /// cycle ACK/Completion has to be returned.
         /// </remarks>
@@ -125,6 +161,30 @@ namespace Visca
                 public const byte On = 0x02;
                 public const byte Off = 0x03;
             }
+
+            #region Aperture 0x02, 0x42
+
+            public const byte Aperture = 0x02;
+            public const byte ApertureValue = 0x42;
+
+            #endregion Aperture
+
+            #region RGain 0x03, 0x43
+
+            public const byte RGain = 0x03;
+            public const byte RGainValue = 0x43;
+
+            #endregion RGain
+
+            #region BGain 0x04, 0x44
+
+            public const byte BGain = 0x04;
+            public const byte BGainValue = 0x44;
+
+            #endregion BGain
+
+            #region Zooom 0x07, 0x47
+
             public const byte Zoom = 0x07;
             public static class ZoomCommands
             {
@@ -134,7 +194,12 @@ namespace Visca
                 public const byte TeleWithSpeed = 0x20;
                 public const byte WideWithSpeed = 0x30;
             }
+
             public const byte ZoomPosition = 0x47;
+
+            #endregion Zoom
+
+            #region Focus 0x08, 0x18, 0x28, 0x38, 0x48
 
             public const byte Focus = 0x08;
             public static class FocusCommands
@@ -145,15 +210,60 @@ namespace Visca
                 public const byte FarWithSpeed = 0x20;
                 public const byte NearWithSpeed = 0x30;
             }
-
             public const byte FocusOnePush = 0x18;
             public static class FocusOnePushCommands
             {
                 public const byte Trigger = 0x01;
                 public const byte Infinity = 0x02;
             }
-
             public const byte FocusNearLimit = 0x28;
+            public const byte FocusAuto = 0x38;
+            public static class FocusAutoMode
+            {
+                public const byte On = 0x02;
+                public const byte Off = 0x03;
+                public const byte Toggle = 0x10;
+            }
+            public const byte FocusPosition = 0x48;
+
+            #endregion Focus
+
+            #region Shutter 0x0A, 0x4A, 0x5A
+
+            public const byte Shutter = 0x0A;
+            public const byte ShutterValue = 0x4A;
+            public const byte ShutterSlow = 0x5A;
+            public static class ShutterSlowMode
+            {
+                public const byte Auto = 0x02;
+                public const byte Manual = 0x03;
+            }
+
+            #endregion Shutter
+
+            #region Iris 0x0B, 0x4B
+
+            public const byte Iris = 0x0B;
+            public const byte IrisValue = 0x4B;
+
+            #endregion Iris
+
+            #region Gain 0x0C, 0x4C
+
+            public const byte Gain = 0x0C;
+            public const byte GainValue = 0x4C;
+
+            #endregion Gain
+
+            #region ExpComp 0x0C, 0x4C
+
+            public const byte ExpComp = 0x0C;
+            public const byte ExpCompValue = 0x4C;
+            public const byte ExpCompPower = 0x5C;
+
+            #endregion ExpComp
+
+            #region WB 0x35
 
             public const byte WB = 0x35;
             public static class WBMode
@@ -166,13 +276,9 @@ namespace Visca
                 public const byte Manual = 0x05;
             }
 
-            public const byte FocusAuto = 0x38;
-            public static class FocusAutoMode
-            {
-                public const byte On = 0x02;
-                public const byte Off = 0x03;
-                public const byte Toggle = 0x10;
-            }
+            #endregion WB
+
+            #region AE 0x39
 
             public const byte AE = 0x39;
             public static class AEMode
@@ -188,7 +294,9 @@ namespace Visca
                 public const byte GainAuto = 0x1C;
             }
 
-            public const byte FocusPosition = 0x48;
+            #endregion AE
+
+            #region Memory 0x3f
 
             public const byte Memory = 0x3F;
             public static class MemoryCommands
@@ -198,6 +306,10 @@ namespace Visca
                 public const byte Recall = 0x02;
                 public const byte Preset1 = 0x01;
             }
+
+            #endregion Memory
+
+            #region PTZ
 
             public const byte PanTilt = 0x01;
             public static class PanTiltCommands
@@ -214,6 +326,8 @@ namespace Visca
             public const byte PanTiltRelative = 0x03;
             public const byte PanTiltHome = 0x04;
             public const byte PanTiltInquiry = 0x12;
+
+            #endregion PTZ
         }
 
     }

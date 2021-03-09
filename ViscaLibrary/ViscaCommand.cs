@@ -21,20 +21,26 @@ namespace Visca
     /// </summary>
     public abstract class ViscaPositionCommand: ViscaCommand
     {
-
         private readonly ViscaVariable _positionByte1;
         private readonly ViscaVariable _positionByte2;
         private readonly ViscaVariable _positionByte3;
         private readonly ViscaVariable _positionByte4;
 
+        private readonly IViscaRangeLimits<int> _limits;
+
         public ViscaPositionCommand(byte address, int position)
+            : this(address, position, new ViscaRangeLimits<int>(0x0000, 0xffff, "Visca 4x byte range is from 0x0000 to 0xffff"))
+        { }
+
+        public ViscaPositionCommand(byte address, int position, IViscaRangeLimits<int> limits)
             : base(address)
         {
-            _positionByte1 = new ViscaVariable("PositionByte1", 0);
-            _positionByte2 = new ViscaVariable("PositionByte2", 0);
-            _positionByte3 = new ViscaVariable("PositionByte3", 0);
-            _positionByte4 = new ViscaVariable("PositionByte4", 0);
+            _positionByte1 = new ViscaVariable("PositionByte1");
+            _positionByte2 = new ViscaVariable("PositionByte2");
+            _positionByte3 = new ViscaVariable("PositionByte3");
+            _positionByte4 = new ViscaVariable("PositionByte4");
 
+            _limits = limits;
             Position = position;
         }
 
@@ -57,6 +63,8 @@ namespace Visca
             }
             set
             {
+                if (_limits != null && ((value < _limits.Low) || (value > _limits.High)))
+                    throw new ArgumentOutOfRangeException("Position", String.Format("Assigned value should be in range between 0x{0:x4} ({0}) and 0x{1:x4} ({1})", _limits.Low, _limits.High));
                 _positionByte1.Value = (byte)((value & 0xF000) >> 12);
                 _positionByte2.Value = (byte)((value & 0x0F00) >> 8);
                 _positionByte3.Value = (byte)((value & 0x00F0) >> 4);

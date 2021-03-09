@@ -188,7 +188,7 @@ namespace Visca
 
         public override string ToString()
         {
-            return String.Format("Camera{0} ZoomPositionInquiry", this.Destination);
+            return String.Format("Camera{0} Zoom.PositionInquiry", this.Destination);
         }
     }
 

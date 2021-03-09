@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using System.Collections.ObjectModel;
+using static Visca.Visca.Commands;
 
 namespace Visca.Tests
 {
@@ -244,7 +245,57 @@ namespace Visca.Tests
             await Task.Delay(100);
 
             wbMode.Should().Be(WBMode.Manual);
-
         }
+
+        [Test]
+        public async Task RGainUpSetInquiry()
+        {
+            ViscaRGain rgainCmd = new ViscaRGain(id, UpDownMode.Reset);
+
+            rgainCmd.Mode.Should().Equals(UpDownMode.Reset);
+
+            Assert.That(((byte[])(rgainCmd)).SequenceEqual(new byte[] { 0x81, 0x01, 0x04, 0x03, 0x00, 0xff }), Is.True, "ViscaRGain.Reset bytes sequence does not match expected");
+
+            rgainCmd.Mode = UpDownMode.Down;
+
+            rgainCmd.Mode.Should().Equals(UpDownMode.Down);
+
+            visca.EnqueueCommand(rgainCmd.SetMode(UpDownMode.Up));
+
+            Assert.That(sendQueue.TryTake(out byte[] rgainPacket, 100), Is.True, "Timeout on sending data for ViscaModeCommand<WBMode>");
+            Assert.That(rgainPacket.SequenceEqual(new byte[] { 0x81, 0x01, 0x04, 0x03, 0x02, 0xff }), Is.True, "ViscaModeCommand<WBMode> with PolyWBMode.Table bytes sequence does not match expected");
+
+            // Respond Completion
+            visca.ProcessIncomingData(new byte[] { 0x90, 0x50, 0xFF });
+
+            // Should thorw Exception as value 0xfab  is bigger then Vaddio default limits of 0xff
+            ArgumentOutOfRangeException ex = Assert.Throws<ArgumentOutOfRangeException>(
+                delegate { ViscaRGainValue rgainBadValueCmd = new ViscaRGainValue(id, 0xfab, ViscaDefaultsVaddio.RGainLimits); });
+
+            ViscaRGainValue rgainValueCmd = new ViscaRGainValue(id, 0xab, ViscaDefaultsVaddio.RGainLimits);
+            Assert.That(((byte[])(rgainValueCmd)).SequenceEqual(new byte[] { 0x81, 0x01, 0x04, 0x43, 0x00, 0x00, 0x0a, 0x0b, 0xff }), Is.True, "ViscaRGain.Value bytes sequence does not match expected");
+
+            visca.EnqueueCommand(rgainValueCmd.SetPosition(0xba));
+            Assert.That(sendQueue.TryTake(out byte[] rgainValuePacket, 100), Is.True, "Timeout on sending data for RGainValue command");
+            Assert.That(rgainValuePacket.SequenceEqual(new byte[] { 0x81, 0x01, 0x04, 0x43, 0x00, 0x00, 0x0b, 0x0a, 0xff }), Is.True, "RGainValue of 0xba bytes sequence does not match expected");
+
+            // Respond Completion
+            visca.ProcessIncomingData(new byte[] { 0x90, 0x50, 0xFF });
+
+            int rgainPosition = 0xff;
+            ViscaRGainInquiry rgainInquiry = new ViscaRGainInquiry(id, new Action<int>( p => { rgainPosition = p; Console.WriteLine("Event: RGainValue: 0x{0:X4} ({0})", p); }));
+
+            visca.EnqueueCommand(rgainInquiry);
+
+            Assert.That(sendQueue.TryTake(out byte[] rgainInquiryPacket, 100), Is.True, "Timeout on sending data for RGain Inquiry command");
+            Assert.That(rgainInquiryPacket.SequenceEqual(new byte[] { 0x81, 0x09, 0x04, 0x43, 0xff }), Is.True, "RGain Inquiry bytes sequence does not match expected");
+
+            // Respond RGain Value 0xba
+            visca.ProcessIncomingData(new byte[] { 0x90, 0x50, 0x00, 0x00, 0x0b, 0x0a, 0xFF });
+            await Task.Delay(100);
+
+            rgainPosition.Should().Be(0xba);
+        }
+
     }
 }

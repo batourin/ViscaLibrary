@@ -8,6 +8,10 @@ namespace Visca
 
         private byte _value;
 
+        public ViscaVariable(string name)
+            : this(name, 0)
+        { }
+
         public ViscaVariable(string name, byte value)
         {
             Name = name;
