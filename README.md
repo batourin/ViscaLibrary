@@ -1,5 +1,5 @@
 # ViscaLibrary
-Implementation of VISCA protocol in C#  as Library
+Implementation of VISCA serial protocol in C# as .NET Library
 
 ## Table of contents
 * [General info](#general-info)
@@ -18,7 +18,7 @@ Project is created with:
 	
 ## Setup
 To use run this library as dependancy for your projects, pull compiled release using nuget:
-- `nuget install .\packages.config -OutputDirectory .\packages -excludeVersion`.
+- `nuget install ViscaLibrary -ExcludeVersion -OutputDirectory .\packages`.
 
 Nuget.exe is available at [nuget.org](https://dist.nuget.org/win-x86-commandline/latest/nuget.exe).
 
