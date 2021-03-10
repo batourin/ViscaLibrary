@@ -18,6 +18,7 @@ namespace Visca
         #endregion Zoom Commands Definition
 
         #region Zoom Commands Implementations
+
         public void ZoomStop() { _visca.EnqueueCommand(_zoomStopCmd); }
         public void ZoomTele() { _visca.EnqueueCommand(_zoomTeleCmd); }
         public void ZoomWide() { _visca.EnqueueCommand(_zoomWideCmd); }

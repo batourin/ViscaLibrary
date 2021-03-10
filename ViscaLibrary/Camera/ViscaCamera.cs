@@ -37,9 +37,6 @@ namespace Visca
             
             _visca = visca;
 
-            if(!_visca.Attach(id, this))
-                throw new ArgumentOutOfRangeException("Id", "Camera with supplied Id already registered");
-
             _powerOnCmd = new ViscaPower((byte)id, true);
             _powerOffCmd = new ViscaPower((byte)id, false);
             _powerInquiry = new ViscaPowerInquiry((byte)id, new Action<bool>( power => { _power = power; OnPowerChanged(new OnOffEventArgs(power)); }));
