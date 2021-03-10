@@ -68,7 +68,7 @@ namespace Visca
             : this(value, ViscaDefaults.FocusSpeedLimits)
          {}
 
-        public ViscaFocusSpeed(ViscaRangeLimits<byte> limits)
+        public ViscaFocusSpeed(IViscaRangeLimits<byte> limits)
             : this( _defaultSpeed, limits)
          {}
 
