@@ -4,6 +4,11 @@
     <TargetFramework>net472</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>Visca</RootNamespace>
+    <Authors>Maxim Batourine</Authors>
+    <Description>Implementation of VISCA protocol in C#  as .NET Library</Description>
+    <PackageProjectUrl>https://github.com/batourin/ViscaLibrary</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/batourin/ViscaLibrary</RepositoryUrl>
+    <UserSecretsId>6b9ff673-e638-4bae-b8e3-751fa9463345</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
