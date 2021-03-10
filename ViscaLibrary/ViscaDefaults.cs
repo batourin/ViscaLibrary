@@ -2,52 +2,28 @@
 
 namespace Visca
 {
-    /// <summary>
-    /// Pan Speed values for VISCA are in range 0x01 to 0x18
-    /// </summary>
-    public class ViscaDefaultPanSpeedLimits : ViscaRangeLimits<byte>
-    {
-        public ViscaDefaultPanSpeedLimits()
-            :base(0x01, 0x018, "Pan Speed should be in range 0x01 to 0x18")
-        {
-        }
-    }
-
-    /// <summary>
-    /// Tilt Speed values for VISCA are in range 0x01 to 0x14
-    /// </summary>
-    public class ViscaDefaultTiltSpeedLimits : ViscaRangeLimits<byte>
-    {
-        public ViscaDefaultTiltSpeedLimits()
-            :base(0x01, 0x14, "Tilt Speed should be in range 0x01 to 0x14")
-        {
-        }
-    }
-
-    /// <summary>
-    /// Zoom Speed values for VISCA are in range 0x00 to 0x07
-    /// </summary>
-    public class ViscaDefaultZoomSpeedLimits : ViscaRangeLimits<byte>
-    {
-        public ViscaDefaultZoomSpeedLimits()
-            :base(0x00, 0x07, "Zoom Speed should be in range 0x00 to 0x07")
-        {
-        }
-    }
-
-    /// <summary>
-    /// Focus Speed values for VISCA are in range 0x00 to 0x07
-    /// </summary>
-    public class ViscaDefaultFocusSpeedLimits : ViscaRangeLimits<byte>
-    {
-        public ViscaDefaultFocusSpeedLimits()
-            :base(0x00, 0x07, "Focus Speed should be in range 0x00 to 0x07")
-        {
-        }
-    }
-
     public static class ViscaDefaults
     {
+        /// <summary>
+        /// Pan Speed values for VISCA are in range 0x01 to 0x18
+        /// </summary>
+        public static IViscaRangeLimits<byte> PanSpeedLimits = new ViscaRangeLimits<byte>(0x1, 0x18, "Pan Speed should be in range from 0x1 to 0x18");
+
+        /// <summary>
+        /// Tilt Speed values for VISCA are in range 0x01 to 0x14
+        /// </summary>
+        public static IViscaRangeLimits<byte> TiltSpeedLimits = new ViscaRangeLimits<byte>(0x1, 0x14, "Tilt Speed should be in range from 0x1 to 0x14");
+
+        /// <summary>
+        /// Zoom Speed values for VISCA are in range 0x00 to 0x07
+        /// </summary>
+        public static IViscaRangeLimits<byte> ZoomSpeedLimits = new ViscaRangeLimits<byte>(0x0, 0x7, "Zoom Speed should be in range from 0 to 7");
+
+        /// <summary>
+        /// Focus Speed values for VISCA are in range 0x00 to 0x07
+        /// </summary>
+        public static IViscaRangeLimits<byte> FocusSpeedLimits = new ViscaRangeLimits<byte>(0x0, 0x7, "Focus Speed should be in range from 0 to 7");
+
         /// <summary>
         /// Visca Aperture value limits are not defined
         /// </summary>
