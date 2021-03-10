@@ -24,7 +24,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\net35</OutputPath>
     <DefineConstants>DEBUG;TRACE;SSHARP;NETCF;NETCF_3_5;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -37,7 +37,7 @@
     <AllowedReferenceRelatedFileExtensions>.allowedReferenceRelatedFileExtensions</AllowedReferenceRelatedFileExtensions>
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Release\net35</OutputPath>
     <DefineConstants>SSHARP;NETCF;NETCF_3_5;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -86,21 +86,32 @@
     <Compile Include="Vaddio\ViscaConstantsVaddio.cs" />
     <Compile Include="Vaddio\ViscaDefaultsVaddio.cs" />
     <Compile Include="Vaddio\ViscaMemoryVaddio.cs" />
+    <Compile Include="Poly\ViscaConstantsPoly.cs" />
+    <Compile Include="Poly\ViscaDefaultsPoly.cs" />
+    <Compile Include="Commands\ViscaAE.cs" />
+    <Compile Include="Commands\ViscaAperture.cs" />
+    <Compile Include="Commands\ViscaBackLight.cs" />
+    <Compile Include="Commands\ViscaExpComp.cs" />
+    <Compile Include="Commands\ViscaFocus.cs" />
+    <Compile Include="Commands\ViscaGain.cs" />
+    <Compile Include="Commands\ViscaIris.cs" />
+    <Compile Include="Commands\ViscaMemory.cs" />
+    <Compile Include="Commands\ViscaPower.cs" />
+    <Compile Include="Commands\ViscaPTZ.cs" />
+    <Compile Include="Commands\ViscaRBGain.cs" />
+    <Compile Include="Commands\ViscaShutter.cs" />
+    <Compile Include="Commands\ViscaWB.cs" />
+    <Compile Include="Commands\ViscaWideDynamic.cs" />
+    <Compile Include="Commands\ViscaZoom.cs" />
     <Compile Include="ViscaCommand.cs" />
     <Compile Include="ViscaConstants.cs" />
     <Compile Include="ViscaDefaults.cs" />
-    <Compile Include="ViscaFocus.cs" />
     <Compile Include="ViscaInquiry.cs" />
-    <Compile Include="ViscaMemory.cs" />
     <Compile Include="ViscaPacket.cs" />
-    <Compile Include="ViscaPower.cs" />
     <Compile Include="ViscaProtocolProcessor.cs" />
-    <Compile Include="ViscaPTZ.cs" />
     <Compile Include="ViscaRxPacket.cs" />
     <Compile Include="ViscaTxPacket.cs" />
     <Compile Include="ViscaVariable.cs" />
-    <Compile Include="ViscaWB.cs" />
-    <Compile Include="ViscaZoom.cs" />
     <None Include="Properties\ControlSystem.cfg" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
