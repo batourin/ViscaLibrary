@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>ViscaLibrary</id>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <authors>Maxim Batourine</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
@@ -18,6 +18,6 @@
   </metadata>
   <files>
     <file src="bin\Release\net35\**" target="lib\net35"/>
-    <file src="bin\Release\net472\**" target="lib\net47"/>
+    <file src="bin\Release\net47\**" target="lib\net47"/>
   </files>
 </package>

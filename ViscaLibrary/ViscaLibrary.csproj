@@ -1,14 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <TargetFramework>net47</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RootNamespace>Visca</RootNamespace>
     <Authors>Maxim Batourine</Authors>
     <Description>Implementation of VISCA protocol in C#  as .NET Library</Description>
     <PackageProjectUrl>https://github.com/batourin/ViscaLibrary</PackageProjectUrl>
     <RepositoryUrl>https://github.com/batourin/ViscaLibrary</RepositoryUrl>
     <UserSecretsId>6b9ff673-e638-4bae-b8e3-751fa9463345</UserSecretsId>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <Version>1.0.2</Version>
+    <AssemblyVersion>1.0.*</AssemblyVersion>
+    <Deterministic>false</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
