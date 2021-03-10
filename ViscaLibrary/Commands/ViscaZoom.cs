@@ -62,17 +62,17 @@ namespace Visca
         private const byte _defaultSpeed = 0x04;
 
         public ViscaZoomSpeed()
-            : this(_defaultSpeed, new ViscaDefaultZoomSpeedLimits())
+            : this(_defaultSpeed, ViscaDefaults.ZoomSpeedLimits)
             {}
         public ViscaZoomSpeed(byte value)
-            : this(value, new ViscaDefaultZoomSpeedLimits())
+            : this(value, ViscaDefaults.ZoomSpeedLimits)
             {}
 
-        public ViscaZoomSpeed(ViscaRangeLimits<byte> limits)
+        public ViscaZoomSpeed(IViscaRangeLimits<byte> limits)
             : this( _defaultSpeed, limits)
             {}
 
-        public ViscaZoomSpeed(byte value, ViscaRangeLimits<byte> limits)
+        public ViscaZoomSpeed(byte value, IViscaRangeLimits<byte> limits)
             : base("ZoomSpeed", value, limits)
         {
         }

@@ -25,18 +25,18 @@ namespace Visca
         private const byte _defaultSpeed = 0x09;
 
         public ViscaPanSpeed()
-            : this(_defaultSpeed, new ViscaDefaultPanSpeedLimits())
+            : this(_defaultSpeed, ViscaDefaults.PanSpeedLimits)
         {}
 
         public ViscaPanSpeed(byte value)
-            : this(value, new ViscaDefaultPanSpeedLimits())
+            : this(value, ViscaDefaults.PanSpeedLimits)
         {}
 
-        public ViscaPanSpeed(ViscaRangeLimits<byte> limits)
+        public ViscaPanSpeed(IViscaRangeLimits<byte> limits)
             : this(_defaultSpeed, limits)
         {}
 
-        public ViscaPanSpeed(byte value, ViscaRangeLimits<byte> limits)
+        public ViscaPanSpeed(byte value, IViscaRangeLimits<byte> limits)
             : base("PanSpeed", value, limits)
         {}
     }
@@ -47,18 +47,18 @@ namespace Visca
         private const byte _defaultSpeed = 0x07;
 
         public ViscaTiltSpeed()
-            : this(_defaultSpeed, new ViscaDefaultTiltSpeedLimits())
+            : this(_defaultSpeed, ViscaDefaults.TiltSpeedLimits)
             {}
 
         public ViscaTiltSpeed(byte value)
-            : this(value, new ViscaDefaultTiltSpeedLimits())
+            : this(value, ViscaDefaults.TiltSpeedLimits)
             {}
 
-        public ViscaTiltSpeed(ViscaRangeLimits<byte> limits)
+        public ViscaTiltSpeed(IViscaRangeLimits<byte> limits)
             : this(_defaultSpeed, limits)
             {}
 
-        public ViscaTiltSpeed(byte value, ViscaRangeLimits<byte> limits)
+        public ViscaTiltSpeed(byte value, IViscaRangeLimits<byte> limits)
             : base("TiltSpeed", value, limits)
             {}
     }

@@ -62,20 +62,19 @@ namespace Visca
         private const byte _defaultSpeed = 0x04;
 
         public ViscaFocusSpeed()
-            : this(_defaultSpeed, new ViscaDefaultFocusSpeedLimits())
-            {}
+            : this(_defaultSpeed, ViscaDefaults.FocusSpeedLimits)
+         {}
         public ViscaFocusSpeed(byte value)
-            : this(value, new ViscaDefaultFocusSpeedLimits())
-            {}
+            : this(value, ViscaDefaults.FocusSpeedLimits)
+         {}
 
         public ViscaFocusSpeed(ViscaRangeLimits<byte> limits)
             : this( _defaultSpeed, limits)
-            {}
+         {}
 
-        public ViscaFocusSpeed(byte value, ViscaRangeLimits<byte> limits)
+        public ViscaFocusSpeed(byte value, IViscaRangeLimits<byte> limits)
             : base("FocusSpeed", value, limits)
-        {
-        }
+        { }
     }
 
     public abstract class ViscaFocusSpeedCommand: ViscaCommand
