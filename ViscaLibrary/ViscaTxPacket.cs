@@ -107,12 +107,12 @@ namespace Visca
         {
             if (ReferenceEquals(obj, null))
                 return false;
-            if(ReferenceEquals(this, obj))
+            if (ReferenceEquals(this, obj))
                 return true;
 
-            var second = obj as ViscaTxPacket;
+            ViscaTxPacket second = obj as ViscaTxPacket;
 
-            return !ReferenceEquals(second, null) && _hash == second._hash;
+            return second is object && _hash == second._hash;
         }
         
         private int getHashCode()

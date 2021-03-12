@@ -25,9 +25,7 @@ namespace Visca
         public override void Process(ViscaRxPacket viscaRxPacket)
         {
             if (_action != null)
-            {
                 _action(viscaRxPacket.PayLoad[0]);
-            }
         }
     }
 

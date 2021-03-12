@@ -11,7 +11,11 @@ namespace Visca
             : base(data)
         {
             if(data == null)
+#if SSHARP
                 throw new ArgumentNullException("data", "ViscaRxPacket data can not be null");
+#else
+                throw new ArgumentNullException(nameof(data), "ViscaRxPacket data can not be null");
+#endif
             // Length is deduct address byte, completion (0x50) byte and termination (0xff) byte
             PayLoad = new PayLoadIndexer(_bytes.Length - 3, getPayload);
         }
