@@ -8,6 +8,16 @@ namespace Visca
 
     public partial class ViscaCamera
     {
+        public class GenericEventArgs<T> : EventArgs
+        {
+            public T EventData { get; private set; }
+
+            public GenericEventArgs(T EventData)
+            {
+                this.EventData = EventData;
+            }
+        }
+
         public class OnOffEventArgs : EventArgs
         {
             private readonly bool _value;
@@ -37,10 +47,16 @@ namespace Visca
             
             _visca = visca;
 
+            #region Power Commands Constructors
+
             _powerOnCmd = new ViscaPower((byte)id, true);
             _powerOffCmd = new ViscaPower((byte)id, false);
             _powerInquiry = new ViscaPowerInquiry((byte)id, new Action<bool>( power => { _power = power; OnPowerChanged(new OnOffEventArgs(power)); }));
             _powerOnOffCmdReply = new Action<ViscaRxPacket>( rxPacket => { if ( rxPacket.IsCompletionCommand ) _visca.EnqueueCommand(_powerInquiry); } );
+
+            #endregion Power Commands Constructors
+
+            #region Zoom Commands Constructors
 
             _zoomStopCmd = new ViscaZoomStop((byte)id);
             _zoomTeleCmd = new ViscaZoomTele((byte)id);
@@ -50,6 +66,10 @@ namespace Visca
             _zoomWideWithSpeedCmd = new ViscaZoomWideWithSpeed((byte)id, _zoomSpeed);
             _zoomPositionCmd = new ViscaZoomPosition((byte)id, 0);
             _zoomPositionInquiry = new ViscaZoomPositionInquiry((byte)id, new Action<int>(position => { _zoomPosition = position; OnZoomPositionChanged(new PositionEventArgs(position)); }));
+
+            #endregion Zoom Commands Constructors
+
+            #region Focus Commands Constructors
 
             _focusStopCmd = new ViscaFocusStop((byte)id);
             _focusFarCmd = new ViscaFocusFar((byte)id);
@@ -71,7 +91,19 @@ namespace Visca
             _focusPositionCmd = new ViscaFocusPosition((byte)id, 0);
             _focusPositionInquiry = new ViscaFocusPositionInquiry((byte)id, new Action<int>(position => { _focusPosition = position; OnFocusPositionChanged(new PositionEventArgs(position)); }));
 
-            // PTZ Commands
+            #endregion Focus Commands Constructors
+
+            #region Memory Commands Constructors
+
+            _memorySetCmd = new ViscaMemorySet((byte)id, 0);
+            _memorySetCmdReply = new Action<ViscaRxPacket, Object>((rxPacket, userObject) => { if (rxPacket.IsCompletionCommand) OnMemorySetComplete(new GenericEventArgs<byte>((byte)userObject)); });
+            _memoryRecallCmd = new ViscaMemoryRecall((byte)id, 0);
+            _memoryRecallCmdReply = new Action<ViscaRxPacket, Object>( (rxPacket, userObject) => { if (rxPacket.IsCompletionCommand) OnMemoryRecallComplete(new GenericEventArgs<byte>((byte)userObject)); });
+
+            #endregion Memory Commands Constructors
+
+            #region PTZ Commands Constructors
+
             _ptzHome = new ViscaPTZHome((byte)id);
             _ptzPanSpeed = new ViscaPanSpeed(_parameters.PanSpeedLimits);
             _ptzTiltSpeed = new ViscaTiltSpeed(_parameters.TiltSpeedLimits);
@@ -86,6 +118,8 @@ namespace Visca
             _ptzDownRight = new ViscaPTZDownRight((byte)id, _ptzPanSpeed, _ptzTiltSpeed);
             _ptzAbsolute = new ViscaPTZPosition((byte)id, false, _ptzPanSpeed, _ptzTiltSpeed, 0, 0);
             _ptzRelative = new ViscaPTZPosition((byte)id, true, _ptzPanSpeed, _ptzTiltSpeed, 0, 0);
+
+            #endregion PTZ Commands Constructors
 
         }
 
