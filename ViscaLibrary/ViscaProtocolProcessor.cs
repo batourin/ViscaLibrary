@@ -52,17 +52,20 @@ namespace Visca
         private class SendQueueItem
         {
             public readonly ViscaTxPacket Packet;
-            public readonly Action<ViscaRxPacket> Reply;
+            public readonly Action<ViscaRxPacket, Object> Reply;
+            public readonly Object UserObject;
 
-            public SendQueueItem(ViscaTxPacket packet, Action<ViscaRxPacket> reply)
+            public SendQueueItem(ViscaTxPacket packet, Action<ViscaRxPacket, Object> reply, Object userObject)
             {
                 Packet = packet;
                 Reply = reply;
+                UserObject = userObject;
             }
         }
+
         private readonly Dictionary<ViscaCameraId, ViscaCamera> _cameras = new Dictionary<ViscaCameraId, ViscaCamera>(7);
 
-		private readonly byte[] _incomingBuffer = new byte[1024];
+        private readonly byte[] _incomingBuffer = new byte[1024];
         private int _incomingBufferLength = 0;
 
 #if SSHARP
@@ -127,6 +130,14 @@ namespace Visca
 
         public void EnqueueCommand(ViscaTxPacket command, Action<ViscaRxPacket> reply)
         {
+            Action<ViscaRxPacket, Object> replyWithUserObject = null;
+            if (reply != null)
+                replyWithUserObject = new Action<ViscaRxPacket, object>((p, o) => reply(p));
+            EnqueueCommand(command, replyWithUserObject, null);
+        }
+
+        public void EnqueueCommand(ViscaTxPacket command, Action<ViscaRxPacket, Object> replyWithUserObjectreply, Object userObject)
+        {
             // check for existing command in the Queue
             bool commandIsEnqueued = false;
             foreach (var sendQueueItem in _sendQueue)
@@ -150,7 +161,7 @@ namespace Visca
                 // If command is ViscaDynamicCommand, clone it to get static version for enquing
                 if (command is ViscaDynamicCommand)
                     command = (command as ViscaDynamicCommand).Clone();
-                _sendQueue.Enqueue(new SendQueueItem(command, reply));
+                _sendQueue.Enqueue(new SendQueueItem(command, replyWithUserObjectreply, userObject));
             }
 
             if (_sendQueueItemInProgress == null && (_responseQueue.Count == 0))
@@ -215,9 +226,9 @@ namespace Visca
                         {
 #if SSHARP
                             if (_sendQueueItemInProgress.Reply != null)
-                                _sendQueueItemInProgress.Reply(rxPacket);
+                                _sendQueueItemInProgress.Reply(rxPacket, _sendQueueItemInProgress.UserObject);
 #else
-                            _sendQueueItemInProgress.Reply?.Invoke(rxPacket);
+                            _sendQueueItemInProgress.Reply?.Invoke(rxPacket, _sendQueueItemInProgress.UserObject);
 #endif
                             continue;
                         } // rxPacket.IsAck
@@ -227,9 +238,9 @@ namespace Visca
                                 logMessage(2, "Collision, completion message is not for Command type message");
 #if SSHARP
                             if (_sendQueueItemInProgress.Reply != null)
-                                _sendQueueItemInProgress.Reply(rxPacket);
+                                _sendQueueItemInProgress.Reply(rxPacket, _sendQueueItemInProgress.UserObject);
 #else
-                                _sendQueueItemInProgress.Reply?.Invoke(rxPacket);
+                            _sendQueueItemInProgress.Reply?.Invoke(rxPacket, _sendQueueItemInProgress.UserObject);
 #endif
                         } // rxPacket.IsCompletionCommand
                         else if (rxPacket.IsCompletionInquiry)
@@ -279,9 +290,9 @@ namespace Visca
 
 #if SSHARP
                         if (_sendQueueItemInProgress.Reply != null)
-                            _sendQueueItemInProgress.Reply(rxPacket);
+                            _sendQueueItemInProgress.Reply(rxPacket, _sendQueueItemInProgress.UserObject);
 #else
-                        _sendQueueItemInProgress.Reply?.Invoke(rxPacket);
+                        _sendQueueItemInProgress.Reply?.Invoke(rxPacket, _sendQueueItemInProgress.UserObject);
 #endif
 
                         logMessage(2, "Completing command in progress: '{0}'", _sendQueueItemInProgress.Packet.ToString());
