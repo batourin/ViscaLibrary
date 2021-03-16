@@ -1,4 +1,5 @@
 using System;
+using System.Security.Policy;
 
 namespace Visca
 {
@@ -8,10 +9,72 @@ namespace Visca
     /// </summary>
     public class ViscaCommand: ViscaTxPacket
     {
+
         public ViscaCommand(byte address)
-        : base(address, false)
+            : base(address, false)
         {
             Append(Visca.Command);
+        }
+
+        public ViscaCommand Clone()
+        {
+            ViscaCommand clone = new ViscaCommand(0);
+            clone._bytes[0] = 2;
+            Array.Copy(_bytes, clone._bytes, _bytes.Length);
+            clone.Length = Length;
+            clone._clonnedToString = ToString();
+            return clone;
+        }
+
+        /// <summary>
+        /// Holds ToString value from ancestors after clonning
+        /// </summary>
+        private string _clonnedToString;
+
+        /// <summary>
+        /// Override ToString to handle ether clonned ancestor or base ToString values
+        /// </summary>
+        /// <returns>String representation of Visca Command</returns>
+        public override string ToString()
+        {
+            if (String.IsNullOrEmpty(_clonnedToString))
+                return base.ToString();
+            else
+                return _clonnedToString;
+        }
+    }
+
+    /// <summary>
+    /// Base class for all Visca command type messages supporting variables
+    /// </summary>
+    public class ViscaDynamicCommand : ViscaCommand
+    {
+        public ViscaDynamicCommand(byte address)
+            : base(address)
+        { }
+
+        public void Append(ViscaVariable variable)
+        {
+            Append(0, variable, 0x00);
+        }
+
+        public void Append(byte data, ViscaVariable variable, byte mask)
+        {
+            int index = Length;
+            _bytes[index] = data;
+            _bytes[index] = (byte)((_bytes[index] & mask) + variable.Value);
+            variable.VariableChanged += (var, args) => { variableUpdater(index, mask, args); };
+            Length++;
+        }
+
+        private void variableUpdater(int index, byte mask, ViscaVariable.VariableEventArgs e)
+        {
+            byte newValue = (byte)((_bytes[index] & mask) + e.Value);
+            if (_bytes[index] != newValue)
+            {
+                _bytes[index] = newValue;
+                recalculateHash();
+            }
         }
     }
 
@@ -19,7 +82,7 @@ namespace Visca
     /// Base class to handle Visca comand with position variable
     /// split into 4 low bytes
     /// </summary>
-    public abstract class ViscaPositionCommand: ViscaCommand
+    public abstract class ViscaPositionCommand: ViscaDynamicCommand
     {
         private readonly ViscaVariable _positionByte1;
         private readonly ViscaVariable _positionByte2;
@@ -97,7 +160,7 @@ namespace Visca
     ///                TestMode.Manual);
     /// </code>
     /// </example>
-    public class ViscaModeCommand<T> : ViscaCommand where T : EnumBaseType<T>
+    public class ViscaModeCommand<T> : ViscaDynamicCommand where T : EnumBaseType<T>
     {
         private readonly ViscaVariable _mode;
         private readonly string _commandName;

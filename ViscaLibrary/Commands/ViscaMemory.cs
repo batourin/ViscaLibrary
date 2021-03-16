@@ -2,7 +2,7 @@
 
 namespace Visca
 {
-    public abstract class ViscaMemory : ViscaCommand
+    public abstract class ViscaMemory : ViscaDynamicCommand
     {
         protected readonly ViscaVariableWithLimits _preset;
 

@@ -23,6 +23,7 @@ namespace Visca
             if (handler != null)
                 handler(this, e);
         }
+
         private bool _power;
         public bool Power
         {

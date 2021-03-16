@@ -9,7 +9,6 @@ using Crestron.SimplSharp.Reflection;
 using Crestron.SimplSharpPro.CrestronThread;
 #else
 using System.Collections.Concurrent;
-//using Timer = System.Timers.Timer;
 using System.Threading;
 #endif
 
@@ -147,7 +146,12 @@ namespace Visca
                     logMessage(2, "\t'{0}'", sendQueueItem.Packet.ToString());
             }
             else
+            {
+                // If command is ViscaDynamicCommand, clone it to get static version for enquing
+                if (command is ViscaDynamicCommand)
+                    command = (command as ViscaDynamicCommand).Clone();
                 _sendQueue.Enqueue(new SendQueueItem(command, reply));
+            }
 
             if (_sendQueueItemInProgress == null && (_responseQueue.Count == 0))
                 sendNextQueuedCommand();
@@ -219,7 +223,7 @@ namespace Visca
                         } // rxPacket.IsAck
                         else  if (rxPacket.IsCompletionCommand)
                         {
-                            if(!(_sendQueueItemInProgress.Packet is ViscaCommand))
+                            if (!_sendQueueItemInProgress.Packet.IsCommand)
                                 logMessage(2, "Collision, completion message is not for Command type message");
 #if SSHARP
                             if (_sendQueueItemInProgress.Reply != null)

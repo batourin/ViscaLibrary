@@ -63,7 +63,7 @@ namespace Visca
             {}
     }
 
-    public abstract class ViscaPTZCommand: ViscaCommand
+    public abstract class ViscaPTZCommand: ViscaDynamicCommand
     {
         public ViscaPanSpeed PanSpeed { get; private set; }
         public ViscaTiltSpeed TiltSpeed { get; private set; }
@@ -319,7 +319,7 @@ namespace Visca
         }
     }
    
-     public class ViscaPTZPosition: ViscaCommand
+     public class ViscaPTZPosition: ViscaDynamicCommand
     {
  
         private readonly bool _relative;

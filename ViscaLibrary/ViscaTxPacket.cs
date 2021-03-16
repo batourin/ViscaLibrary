@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 
 namespace Visca
 {
@@ -22,13 +23,17 @@ namespace Visca
                 _bytes[0] = (byte)(0x80 + address);
         }
 
+        public bool IsCommand { get { return _bytes[1] == Visca.Command; } }
+
+        public bool IsInquiry { get { return _bytes[1] == Visca.Inquiry; } }
+
         public byte Length
         {
             get { return _length; } 
             set
             {
                 _length = value;
-                _hash = getHashCode();
+                recalculateHash();
             }
         }
 
@@ -42,30 +47,6 @@ namespace Visca
         {
             Array.Copy(data, 0, _bytes, Length, data.Length);
             Length += (byte) data.Length;
-        }
-
-        public void Append(ViscaVariable variable)
-        {
-            Append(0, variable, 0x00);
-        }
-
-        public void Append(byte data, ViscaVariable variable, byte mask)
-        {
-            int index = Length;
-            _bytes[index] = data;
-            _bytes[index] = (byte)((_bytes[index] & mask) + variable.Value);
-            variable.VariableChanged += (var, args) => { variableUpdater(index, mask, args); };
-            Length++;
-        }
-
-        private void variableUpdater(int index, byte mask, ViscaVariable.VariableEventArgs e)
-        {
-            byte newValue = (byte)((_bytes[index] & mask) + e.Value);
-            if(_bytes[index] != newValue)
-            {
-                _bytes[index] = newValue;
-                _hash = getHashCode();
-            }
         }
 
         public override int GetHashCode()
@@ -114,8 +95,8 @@ namespace Visca
 
             return second is object && _hash == second._hash;
         }
-        
-        private int getHashCode()
+
+        protected void recalculateHash()
         {
             unchecked
             {
@@ -130,8 +111,8 @@ namespace Visca
                 hash += hash << 3;
                 hash ^= hash >> 17;
                 hash += hash << 5;
-                return hash;
+                _hash = hash;
             }
         }
-   }
+    }
 }

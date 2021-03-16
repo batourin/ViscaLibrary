@@ -78,7 +78,7 @@ namespace Visca
         }
     }
 
-    public abstract class ViscaZoomSpeedCommand: ViscaCommand
+    public abstract class ViscaZoomSpeedCommand: ViscaDynamicCommand
     {
         public ViscaZoomSpeed ZoomSpeed { get; private set; }
 

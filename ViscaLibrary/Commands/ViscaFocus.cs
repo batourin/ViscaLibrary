@@ -77,7 +77,7 @@ namespace Visca
         { }
     }
 
-    public abstract class ViscaFocusSpeedCommand: ViscaCommand
+    public abstract class ViscaFocusSpeedCommand: ViscaDynamicCommand
     {
         public ViscaFocusSpeed FocusSpeed { get; private set; }
 
