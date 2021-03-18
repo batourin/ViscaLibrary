@@ -48,7 +48,10 @@ namespace Visca
 
     public class ViscaProtocolProcessor
     {
-
+        /// <summary>
+        /// Holds require Command, optional Completion or InquiryCompletion 
+        /// action and UserObject to be passed to completion action
+        /// </summary>
         private class SendQueueItem
         {
             public readonly ViscaTxPacket Packet;
@@ -78,7 +81,17 @@ namespace Visca
         private readonly CancellationTokenSource _responseQueueCancel = new CancellationTokenSource();
         private readonly Timer _sendQueueItemInProgressTimer;
 #endif
+        /// <summary>
+        /// Holds currently submited command
+        /// </summary>
         private SendQueueItem _sendQueueItemInProgress;
+        /// <summary>
+        /// Holds socket number for command sent to camera
+        /// </summary>
+        private byte? _socketInProgress;
+        /// <summary>
+        /// Thread to process responses from camera
+        /// </summary>
         private readonly Thread _responseParseThread;
 
         private readonly Action<byte, string, object[]> _logAction; 
@@ -168,6 +181,15 @@ namespace Visca
                 sendNextQueuedCommand();
         }
 
+        public void CancelCommand()
+        {
+            if(_socketInProgress.HasValue && _sendQueueItemInProgress != null && _sendQueueItemInProgress.Packet.IsCommand)
+            {
+                logMessage(1, "Command '{0}' canceling on socket '{1}'", _sendQueueItemInProgress.Packet.ToString(), _socketInProgress.Value);
+                _sendData(new byte[] { (byte)(0x80 + _sendQueueItemInProgress.Packet.Destination), (byte)(0x20 + _socketInProgress.Value), 0xFF});
+            }
+        }
+
         /// <summary>
         /// Sends the next queued command to the device
         /// </summary>
@@ -224,12 +246,8 @@ namespace Visca
 #endif
                         if (rxPacket.IsAck)
                         {
-#if SSHARP
-                            if (_sendQueueItemInProgress.Reply != null)
-                                _sendQueueItemInProgress.Reply(rxPacket, _sendQueueItemInProgress.UserObject);
-#else
-                            _sendQueueItemInProgress.Reply?.Invoke(rxPacket, _sendQueueItemInProgress.UserObject);
-#endif
+                            _socketInProgress = rxPacket.Socket;
+                            logMessage(1, "Command '{0}' accepted on socket '{1}'", _sendQueueItemInProgress.Packet.ToString(), _socketInProgress.Value);
                             continue;
                         } // rxPacket.IsAck
                         else  if (rxPacket.IsCompletionCommand)
@@ -297,6 +315,7 @@ namespace Visca
 
                         logMessage(2, "Completing command in progress: '{0}'", _sendQueueItemInProgress.Packet.ToString());
                         _sendQueueItemInProgress = null;
+                        _socketInProgress = null;
                     }
                 }
 #if SSHARP
@@ -331,6 +350,7 @@ namespace Visca
             _cameras.Add(id, camera);
             return true;
         }
+
         public class CamerasIndexer
         {
             private readonly Func<ViscaCameraId, ViscaCamera> _getCameraAction;
@@ -451,11 +471,5 @@ namespace Visca
             _logAction?.Invoke(level, format, args);
 #endif
         }
-
-        public void Test()
-        {
-            _sendData(new byte[]{0x01, 0x02, 0xFF});
-        }
-
     }
 }
