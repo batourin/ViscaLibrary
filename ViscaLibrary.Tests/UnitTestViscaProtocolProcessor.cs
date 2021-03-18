@@ -4,8 +4,6 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using System.Collections.ObjectModel;
-using static Visca.Visca.Commands;
 
 namespace Visca.Tests
 {
@@ -26,7 +24,7 @@ namespace Visca.Tests
                 }),
                 new Action<byte, string, object[]>((l, f, o) =>
                 {
-                    Console.WriteLine("LOG:[{0}]", String.Format(f, o));
+                    Console.WriteLine("VISCA LOG:[{0}]", String.Format(f, o));
                 })
             );
 
@@ -47,9 +45,9 @@ namespace Visca.Tests
             Assert.DoesNotThrowAsync(async () =>
            {
                // Respond partial ACK
-               visca.ProcessIncomingData(new byte[] { 0x90, 0x40 });
+               visca.ProcessIncomingData(new byte[] { 0x90, 0x41 });
                // Respond rest of ACK and Completion
-               visca.ProcessIncomingData(new byte[] { 0xFF, 0x90, 0x50, 0xFF });
+               visca.ProcessIncomingData(new byte[] { 0xFF, 0x90, 0x51, 0xFF });
                await Task.Delay(100);
            });
         }
