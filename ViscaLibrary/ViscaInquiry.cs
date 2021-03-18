@@ -24,8 +24,12 @@ namespace Visca
 
         public override void Process(ViscaRxPacket viscaRxPacket)
         {
+#if SSHARP
             if (_action != null)
                 _action(viscaRxPacket.PayLoad[0]);
+#else
+            _action?.Invoke(viscaRxPacket.PayLoad[0]);
+#endif
         }
     }
 
