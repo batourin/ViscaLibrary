@@ -46,7 +46,7 @@ namespace Visca
 
         public byte Socket
         {
-            get { return (byte)(_bytes[1] & 0x01); }
+            get { return (byte)(_bytes[1] & 0x0f); }
         }
 
         public bool IsError
