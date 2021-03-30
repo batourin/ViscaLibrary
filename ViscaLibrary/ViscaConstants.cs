@@ -22,12 +22,12 @@ namespace Visca
         protected static List<T> enumValues = new List<T>();
 
         public readonly byte Key;
-        public readonly string Value;
+        protected readonly string toStringValue;
 
-        public EnumBaseType(byte key, string value)
+        public EnumBaseType(byte key, string stringValue)
         {
             Key = key;
-            Value = value;
+            toStringValue = stringValue;
             enumValues.Add((T)this);
         }
 
@@ -52,23 +52,28 @@ namespace Visca
 
         public override string ToString()
         {
-            return Value;
+            return toStringValue;
         }
     }
 
     public class OnOffMode : EnumBaseType<OnOffMode>
     {
-        public static readonly UpDownMode On = new UpDownMode(Visca.On, "On");
-        public static readonly UpDownMode Off = new UpDownMode(Visca.Off, "Off");
+        public static readonly OnOffMode On = new OnOffMode(Visca.On, "On");
+        public static readonly OnOffMode Off = new OnOffMode(Visca.Off, "Off");
 
         public OnOffMode(byte key, string value) : base(key, value)
         { }
+
+        public static implicit operator bool(OnOffMode mode)
+        {
+            return mode == On;
+        }
     }
 
     public class AutoManualMode : EnumBaseType<AutoManualMode>
     {
-        public static readonly UpDownMode Auto = new UpDownMode(Visca.Auto, "Reset");
-        public static readonly UpDownMode Manual = new UpDownMode(Visca.Manual, "Manual");
+        public static readonly AutoManualMode Auto = new AutoManualMode(Visca.Auto, "Reset");
+        public static readonly AutoManualMode Manual = new AutoManualMode(Visca.Manual, "Manual");
 
         public AutoManualMode(byte key, string value) : base(key, value)
         { }
@@ -141,6 +146,7 @@ namespace Visca
             public const byte Camera1 = 0x04;
             public const byte PanTilt = 0x06;
             public const byte Camera2 = 0x07;
+            public const byte SonyExtended = 0x7e;
         }
 
         public static class Vendor
@@ -320,6 +326,13 @@ namespace Visca
             }
 
             #endregion Memory
+
+            #region Others 0x74, 0x75
+
+            public const byte Title = 0x74;
+            public const byte Mute = 0x75;
+
+            #endregion Others
 
             #region PTZ
 

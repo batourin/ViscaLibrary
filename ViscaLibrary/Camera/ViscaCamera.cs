@@ -49,9 +49,9 @@ namespace Visca
 
             #region Power Commands Constructors
 
-            _powerOnCmd = new ViscaPower((byte)id, true);
-            _powerOffCmd = new ViscaPower((byte)id, false);
-            _powerInquiry = new ViscaPowerInquiry((byte)id, new Action<bool>( power => { _power = power; OnPowerChanged(new OnOffEventArgs(power)); }));
+            _powerOnCmd = new ViscaPower((byte)id, OnOffMode.On);
+            _powerOffCmd = new ViscaPower((byte)id, OnOffMode.Off);
+            _powerInquiry = new ViscaPowerInquiry((byte)id, new Action<OnOffMode>( mode => { _power = mode; OnPowerChanged(new OnOffEventArgs(mode)); }));
             _powerOnOffCmdReply = new Action<ViscaRxPacket>( rxPacket => { if ( rxPacket.IsCompletionCommand ) _visca.EnqueueCommand(_powerInquiry); } );
 
             #endregion Power Commands Constructors
@@ -85,7 +85,7 @@ namespace Visca
             _focusAutoOnCmd = new ViscaFocusAutoOn((byte)id);
             _focusAutoOffCmd = new ViscaFocusAutoOff((byte)id);
             _focusAutoToggleCmd = new ViscaFocusAutoToggle((byte)id);
-            _focusAutoInquiry = new ViscaFocusAutoInquiry((byte)id, new Action<bool>(focusAuto => { _focusAuto = focusAuto; OnFocusAutoChanged(new OnOffEventArgs(focusAuto)); }));
+            _focusAutoInquiry = new ViscaFocusAutoInquiry((byte)id, new Action<OnOffMode>(mode => { _focusAuto = mode; OnFocusAutoChanged(new OnOffEventArgs(mode)); }));
             _focusAutoOnOffCmdReply = new Action<ViscaRxPacket>(rxPacket => { if (rxPacket.IsCompletionCommand) _visca.EnqueueCommand(_focusAutoInquiry); });
 
             _focusPositionCmd = new ViscaFocusPosition((byte)id, 0);

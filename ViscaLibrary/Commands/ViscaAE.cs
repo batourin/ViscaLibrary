@@ -26,20 +26,10 @@ namespace Visca
 
     }
 
-    public class ViscaAEInquiry : ViscaValueInquiry
+    public class ViscaAEInquiry : ViscaModeInquiry<AEMode>
     {
         public ViscaAEInquiry(byte address, Action<AEMode> action)
-            : base(address, new Action<byte>(b => { AEMode aeMode = AEMode.GetByKey(b); action(aeMode); }))
-        {
-            Append(new byte[]{
-                Visca.Category.Camera1,
-                Visca.Commands.AE
-            });
-        }
-
-        public override string ToString()
-        {
-            return String.Format("Camera{0} AE.Inquiry", this.Destination);
-        }
+            : base(address, new byte[] { Visca.Category.Camera1, Visca.Commands.AE }, "AE", action)
+        { }
     }
 }

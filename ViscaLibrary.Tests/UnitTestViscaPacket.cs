@@ -8,8 +8,8 @@ namespace Visca.Tests
         [Test]
         public void ViscaPacketComparsions()
         {
-            ViscaPower power1 = new ViscaPower(0x01, true);
-            ViscaPower power2 = new ViscaPower(0x01, true);
+            ViscaPower power1 = new ViscaPower(0x01, OnOffMode.On);
+            ViscaPower power2 = new ViscaPower(0x01, OnOffMode.On);
 
             Assert.That(power1.Equals(null), Is.False, "ViscaTxPacket.Equals returned true on null");
             Assert.That(power1.Equals(power2), Is.True, "ViscaTxPacket.Equals returned not true on same commands");

@@ -264,21 +264,11 @@ namespace Visca
         }
     }
 
-    public class ViscaFocusAutoInquiry : ViscaOnOffInquiry
+    public class ViscaFocusAutoInquiry : ViscaModeInquiry<OnOffMode>
     {
-        public ViscaFocusAutoInquiry(byte address, Action<bool> action)
-        : base(address, action)
-        {
-            Append(new byte[]{
-                Visca.Category.Camera1,
-                Visca.Commands.FocusAuto
-            });
-        }
-
-        public override string ToString()
-        {
-            return String.Format("Camera{0} Focus.Auto.Inquiry", this.Destination);
-        }
+        public ViscaFocusAutoInquiry(byte address, Action<OnOffMode> action)
+            : base(address, new byte[] { Visca.Category.Camera1, Visca.Commands.FocusAuto }, "Focus.Auto", action)
+        { }
     }
 
     public class ViscaFocusPosition : ViscaPositionCommand

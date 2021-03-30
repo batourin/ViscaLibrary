@@ -92,11 +92,13 @@
     <Compile Include="Commands\ViscaGain.cs" />
     <Compile Include="Commands\ViscaIris.cs" />
     <Compile Include="Commands\ViscaMemory.cs" />
+    <Compile Include="Commands\ViscaMute.cs" />
     <Compile Include="Commands\ViscaPower.cs" />
     <Compile Include="Commands\ViscaPTZ.cs" />
     <Compile Include="Commands\ViscaRBGain.cs" />
     <Compile Include="Commands\ViscaShutter.cs" />
     <Compile Include="Commands\ViscaSystem.cs" />
+    <Compile Include="Commands\ViscaTitle.cs" />
     <Compile Include="Commands\ViscaWB.cs" />
     <Compile Include="Commands\ViscaWideDynamic.cs" />
     <Compile Include="Commands\ViscaZoom.cs" />

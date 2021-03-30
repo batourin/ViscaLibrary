@@ -24,20 +24,10 @@ namespace Visca
 
     }
 
-    public class ViscaWBInquiry: ViscaValueInquiry
+    public class ViscaWBInquiry : ViscaModeInquiry<WBMode>
     {
         public ViscaWBInquiry(byte address, Action<WBMode> action)
-            :base(address, new Action<byte>(b => { WBMode wbMode = WBMode.GetByKey(b); action(wbMode); }))
-        {
-            Append(new byte[]{
-                Visca.Category.Camera1,
-                Visca.Commands.WB
-            });
-        }
-
-        public override string ToString()
-        {
-            return String.Format("Camera{0} WB.Inquiry", this.Destination);
-        }
+            : base(address, new byte[] { Visca.Category.Camera1, Visca.Commands.WB }, "WB", action)
+        { }
     }
 }

@@ -5,7 +5,7 @@ namespace Visca
     public abstract class ViscaInquiry: ViscaTxPacket
     {
         public ViscaInquiry(byte address)
-        : base(address, false)
+        : base(address)
         {
             Append(Visca.Inquiry);
         }
@@ -109,6 +109,52 @@ namespace Visca
                 else
                     throw new ArgumentOutOfRangeException("viscaRxPacket", "Recieved packet is not 2D Position Inquiry");
             }
+        }
+    }
+
+    /// <summary>
+    /// Class representing Visca Inquiry that normally set up one of the aspects of
+    /// camera operations mode, i.e. White Balance modes, Automatic Exposure modes, etc 
+    /// </summary>
+    /// <typeparam name="T"><code>EnumBaseType<T></code> type pseudo enumeration
+    /// representing possible command parameter</typeparam>
+    /// <example>
+    /// <code>
+    /// ViscaModeInquiry<TestMode> testCmd = new ViscaModeInquiry<TestMode>(
+    ///                1,
+    ///                new byte[]{
+    ///                Visca.Category.Camera1,
+    ///                Visca.Commands.AE
+    ///                },
+    ///                "AETest",
+    ///                new Action<TestMode>( mode => { if (mode == TestMode.Test) Console.PrintLine("TestMode.Test"); }));
+    /// </code>
+    /// </example>
+
+    public class ViscaModeInquiry<T> : ViscaInquiry where T : EnumBaseType<T>
+    {
+        private readonly Action<T> _action;
+        private readonly string _commandName;
+
+        public ViscaModeInquiry(byte address, byte[] commands, string commandName, Action<T> action)
+        : base(address)
+        {
+            Append(commands);
+            _commandName = commandName;
+            _action = action;
+        }
+
+        public override void Process(ViscaRxPacket viscaRxPacket)
+        {
+            if (_action != null)
+            {
+                _action(EnumBaseType<T>.GetByKey(viscaRxPacket.PayLoad[0]));
+            }
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Camera{0} {1}.Inquiry", this.Destination, _commandName);
         }
     }
 }

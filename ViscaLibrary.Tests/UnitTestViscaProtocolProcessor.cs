@@ -55,9 +55,9 @@ namespace Visca.Tests
         [Test]
         public async Task Power_OnWithFeedback()
         {
-            ViscaPower powerOnCmd = new ViscaPower(id, true);
+            ViscaPower powerOnCmd = new ViscaPower(id, OnOffMode.On);
             bool power = false;
-            ViscaPowerInquiry powerInquiry = new ViscaPowerInquiry(id, new Action<bool>(p => { power = p; Console.WriteLine("Event: power: {0}", p); }));
+            ViscaPowerInquiry powerInquiry = new ViscaPowerInquiry(id, new Action<OnOffMode>(mode => { power = mode; Console.WriteLine("Event: power: {0}", mode); }));
             Action<ViscaRxPacket> powerOnOffCmdReply = new Action<ViscaRxPacket>(rxPacket => { if (rxPacket.IsCompletionCommand) visca.EnqueueCommand(powerInquiry); });
 
             visca.EnqueueCommand(powerOnCmd, powerOnOffCmdReply);
@@ -232,7 +232,7 @@ namespace Visca.Tests
         public async Task WBInquiry()
         {
             WBMode wbMode = WBMode.Auto;
-            ViscaWBInquiry wbInquiry = new ViscaWBInquiry(id, new Action<WBMode>( wb => { wbMode = wb; Console.WriteLine("Event: WB Mode: {0}", wb); }));
+            ViscaWBInquiry wbInquiry = new ViscaWBInquiry(id, new Action<WBMode>( mode => { wbMode = mode; Console.WriteLine("Event: WB Mode: {0}", mode); }));
             visca.EnqueueCommand(wbInquiry);
 
             Assert.That(sendQueue.TryTake(out byte[] wbInquiryPacket, 100), Is.True, "Timeout on sending data for WB Inquiry command");
