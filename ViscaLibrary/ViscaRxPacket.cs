@@ -20,6 +20,14 @@ namespace Visca
             PayLoad = new PayLoadIndexer(_bytes.Length - 3, getPayload);
         }
 
+        public bool IsNetworkChange
+        {
+            get
+            {
+                return (_bytes.Length == 3) && ((_bytes[1] & 0x38) == 0x38);
+            }
+        }
+
         public bool IsAck
         {
             get
@@ -52,6 +60,11 @@ namespace Visca
         public bool IsError
         {
             get { return ((_bytes[1] & 0x60) == 0x60); }
+        }
+
+        public bool IsClearBroadcast
+        {
+            get { return (_bytes.Length == 5) && (_bytes[0] == 0x88) && (_bytes[1] == 0x01) && (_bytes[2] == 0x00) && (_bytes[3] == 0x01); }
         }
 
         public ViscaError Error
@@ -96,7 +109,9 @@ namespace Visca
 
         public override string ToString()
         {
-            if(IsAck)
+            if (IsNetworkChange)
+                return String.Format("Camera{0} added or removed", Source);
+            else if (IsAck)
                 return String.Format("Camera{0} on socket {1} ACK", Source, Socket);
             else if(IsCompletionCommand)
                 return String.Format("Camera{0} on socket {1} Completion", Source, Socket);

@@ -181,6 +181,14 @@ namespace Visca
                 sendNextQueuedCommand();
         }
 
+        public void InitializeChain()
+        {
+            logMessage(1, "Initializing Chain");
+            _sendData(new byte[] { (byte)0x88, (byte)0x30, 0x01, 0xFF });
+            // Send broadcast clear
+            _sendData(new ViscaClear());
+        }
+
         public void CancelCommand()
         {
             if(_socketInProgress.HasValue && _sendQueueItemInProgress != null && _sendQueueItemInProgress.Packet.IsCommand)
@@ -231,6 +239,17 @@ namespace Visca
                             rxPacket.ToString(),
                             //String.Concat(message.Select(b => string.Format(@"[{0:X2}]", (int)b)).ToArray()),
                             _responseQueue.Count);
+
+                    if (rxPacket.IsNetworkChange)
+                    {
+                        // TODO: rxPacket.IsNetworkChange not sure what shall we doo
+                        continue;
+                    } else if (rxPacket.IsClearBroadcast)
+                    {
+                        // TODO: rxPacket.IsClearBroadcast not sure what shall we doo
+                        continue;
+                    }
+
 
                     if (_sendQueueItemInProgress == null)
                     {
