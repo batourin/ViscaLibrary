@@ -10,8 +10,21 @@ namespace Visca
     public class ViscaCommand: ViscaTxPacket
     {
 
+        /// <summary>
+        /// Broadcast command
+        /// </summary>
+        public ViscaCommand()
+            : base()
+        {
+            Append(Visca.Command);
+        }
+
+        /// <summary>
+        /// Addressed command
+        /// </summary>
+        /// <param name="address">camera Id 0-7</param>
         public ViscaCommand(byte address)
-            : base(address, false)
+            : base(address)
         {
             Append(Visca.Command);
         }

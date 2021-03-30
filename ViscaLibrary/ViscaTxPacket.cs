@@ -14,13 +14,23 @@ namespace Visca
         // packet constructor function. This function will also append a terminator.
         private byte _length = 1;
 
-        public ViscaTxPacket(byte address, bool broadcast)
+        /// <summary>
+        /// Construcot for broadcast command
+        /// </summary>
+        public ViscaTxPacket()
             : base(null)
         {
-            if (broadcast)
-                _bytes[0] = (byte)(0x80 + (0x01 << 3));
-            else
-                _bytes[0] = (byte)(0x80 + address);
+            _bytes[0] = (byte)(0x80 + (0x01 << 3));
+        }
+
+        /// <summary>
+        /// Constructor for adddressed (non-broadcast commands)
+        /// </summary>
+        /// <param name="address">camera id - 0-7</param>
+        public ViscaTxPacket(byte address)
+            : base(null)
+        {
+            _bytes[0] = (byte)(0x80 + address);
         }
 
         public bool IsCommand { get { return _bytes[1] == Visca.Command; } }
