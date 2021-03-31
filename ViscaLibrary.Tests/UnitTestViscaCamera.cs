@@ -46,5 +46,21 @@ namespace Visca.Tests
             }
 
         }
+        [Test]
+        public async Task CamerAESetEvent()
+        {
+            AEMode mode = AEMode.FullAuto;
+            camera.AEChanged += (s, e) => { Console.WriteLine("AE changes: {0}", e.EventData); };
+            camera.AE = AEMode.GainAuto;
+            using (var monitoredSubject = camera.Monitor())
+            {
+                // Respond Completion
+                visca.ProcessIncomingData(new byte[] { 0x90, 0x50, 0xFF });
+                await Task.Delay(100);
+                //monitoredSubject.Should().Raise("MemoryRecallComplete").WithSender(camera).WithArgs<ViscaCamera.GenericEventArgs<byte>>(args => args.EventData == 1);
+                camera.AE.Should().Be(AEMode.GainAuto);
+            }
+
+        }
     }
 }
