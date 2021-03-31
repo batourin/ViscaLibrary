@@ -68,9 +68,17 @@ namespace Visca
             #region BackLight Commands Constructors
 
             _backLightCmd = new ViscaBackLight((byte)id, OnOffMode.On);
-            _backLightInquiry = new ViscaBackLightInquiry((byte)id, new Action<OnOffMode>(mode => { _backLight = mode; OnPowerChanged(new OnOffEventArgs(mode)); }));
+            _backLightInquiry = new ViscaBackLightInquiry((byte)id, new Action<OnOffMode>(mode => { _backLight = mode; OnBackLightChanged(new OnOffEventArgs(mode)); }));
 
             #endregion BackLight Commands Constructors
+
+            #region ExpComp Commands Constructors
+
+            _expCompCmd = new ViscaExpComp((byte)id, UpDownMode.Up);
+            _expCompValueCmd = new ViscaExpCompValue((byte)id, 0);
+            _expCompInquiry = new ViscaExpCompInquiry((byte)id, new Action<int>(position => { _expComp = position; OnExpCompChanged(new PositionEventArgs(position)); }));
+
+            #endregion ExpComp Commands Constructors
 
             #region Power Commands Constructors
 
