@@ -210,40 +210,11 @@ namespace Visca
         }
     }
 
-    public class ViscaFocusAutoOn : ViscaCommand
+    public class ViscaFocusAuto : ViscaModeCommand<OnOffMode>
     {
-        public ViscaFocusAutoOn(byte address)
-        : base(address)
-        {
-            Append(new byte[]{
-                Visca.Category.Camera1,
-                Visca.Commands.FocusAuto,
-                Visca.Commands.FocusAutoMode.On
-            });
-        }
-
-        public override string ToString()
-        {
-            return String.Format("Camera{0} Focus.Auto.On", this.Destination);
-        }
-    }
-
-    public class ViscaFocusAutoOff : ViscaCommand
-    {
-        public ViscaFocusAutoOff(byte address)
-        : base(address)
-        {
-            Append(new byte[]{
-                Visca.Category.Camera1,
-                Visca.Commands.FocusAuto,
-                Visca.Commands.FocusAutoMode.Off
-            });
-        }
-
-        public override string ToString()
-        {
-            return String.Format("Camera{0} Focus.Auto.Off", this.Destination);
-        }
+        public ViscaFocusAuto(byte address, OnOffMode mode)
+            : base(address, new byte[] { Visca.Category.Camera1, Visca.Commands.FocusAuto }, "Focus.Auto", mode)
+        { }
     }
 
     public class ViscaFocusAutoToggle : ViscaCommand

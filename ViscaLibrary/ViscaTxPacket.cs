@@ -17,7 +17,7 @@ namespace Visca
         /// <summary>
         /// Action to be excuted when command fail
         /// </summary>
-        public readonly Action<ViscaError> ErrorAction;
+        public Action<ViscaError> ErrorAction;
 
         /// <summary>
         /// Construcot for broadcast command
@@ -29,19 +29,26 @@ namespace Visca
         }
 
         /// <summary>
-        /// Constructor for adddressed (non-broadcast commands)
+        /// Constructor for adddressed non-broadcast commands
         /// </summary>
         /// <param name="address">camera id - 0-7</param>
         public ViscaTxPacket(byte address)
             : this(address, null)
         { }
 
+        /// <summary>
+        /// Constructor for addressed command and setting error action to execute if error occurs
+        /// </summary>
+        /// <param name="address">camera id - 0 - 7</param>
+        /// <param name="errorAction">ViscaProtocolProcessor will execute this action with ViscaError parameter if error recieved</param>
         public ViscaTxPacket(byte address, Action<ViscaError> errorAction)
             : base(null)
         {
             _bytes[0] = (byte)(0x80 + address);
             ErrorAction = errorAction;
         }
+
+        public ViscaTxPacket OnError(Action<ViscaError> errorAction) { ErrorAction = errorAction; return this; }
 
         public bool IsCommand { get { return _bytes[1] == Visca.Command; } }
 

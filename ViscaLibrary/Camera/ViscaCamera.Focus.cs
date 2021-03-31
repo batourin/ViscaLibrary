@@ -16,11 +16,9 @@ namespace Visca
         private readonly ViscaFocusInfinity _focusInfinityCmd;
         private readonly ViscaFocusNearLimit _focusNearLimitCmd;
 
-        private readonly ViscaFocusAutoOn _focusAutoOnCmd;
-        private readonly ViscaFocusAutoOff _focusAutoOffCmd;
+        private readonly ViscaFocusAuto _focusAutoCmd;
         private readonly ViscaFocusAutoToggle _focusAutoToggleCmd;
         private readonly ViscaFocusAutoInquiry _focusAutoInquiry;
-        private readonly Action<ViscaRxPacket> _focusAutoOnOffCmdReply;
 
         private readonly ViscaFocusPosition _focusPositionCmd;
         private readonly ViscaFocusPositionInquiry _focusPositionInquiry;
@@ -70,9 +68,9 @@ namespace Visca
             set
             {
                 if (value)
-                    _visca.EnqueueCommand(_focusAutoOnCmd, _focusAutoOnOffCmdReply);
+                    _visca.EnqueueCommand(_focusAutoCmd.SetMode(OnOffMode.On).OnCompletion(() => { _focusAuto = value; }));
                 else
-                    _visca.EnqueueCommand(_focusAutoOffCmd, _focusAutoOnOffCmdReply);
+                    _visca.EnqueueCommand(_focusAutoCmd.SetMode(OnOffMode.On).OnCompletion(() => { _focusAuto = value; }));
             }
         }
 
@@ -85,19 +83,19 @@ namespace Visca
         protected virtual void OnFocusPositionChanged(PositionEventArgs e)
         {
             EventHandler<PositionEventArgs> handler = FocusPositionChanged;
+#if SSHARP
             if (handler != null)
                 handler(this, e);
+#else
+            handler?.Invoke(this, e);
+#endif
         }
 
         private int _focusPosition;
         public int FocusPosition
         {
             get { return _focusPosition; }
-            set
-            {
-                _visca.EnqueueCommand(_focusPositionCmd.SetPosition(value));
-                _focusPosition = value;
-            }
+            set { _visca.EnqueueCommand(_focusPositionCmd.SetPosition(value).OnCompletion(()=> { _focusPosition = value; })); }
         }
 
         #endregion Focus Commands Implementations

@@ -54,7 +54,6 @@ namespace Visca
 
             _aeCmd = new ViscaAEMode((byte)id, AEMode.FullAuto);
             _aeInquiry = new ViscaAEInquiry((byte)id, new Action<AEMode>(mode => { _ae = mode; OnAEChanged(new GenericEventArgs<AEMode>(mode)); }));
-            //_aeCmdReply = new Action<ViscaRxPacket>(rxPacket => { if (rxPacket.IsCompletionCommand) _ae = _aePending; });
 
             #endregion AE Commands Constructors
 
@@ -62,7 +61,6 @@ namespace Visca
 
             _powerCmd = new ViscaPower((byte)id, OnOffMode.On);
             _powerInquiry = new ViscaPowerInquiry((byte)id, new Action<OnOffMode>( mode => { _power = mode; OnPowerChanged(new OnOffEventArgs(mode)); }));
-            //_powerOnOffCmdReply = new Action<ViscaRxPacket>( rxPacket => { if ( rxPacket.IsCompletionCommand ) _visca.EnqueueCommand(_powerInquiry); } );
 
             #endregion Power Commands Constructors
 
@@ -92,11 +90,9 @@ namespace Visca
 
             _focusNearLimitCmd = new ViscaFocusNearLimit((byte)id, 0x1000);
 
-            _focusAutoOnCmd = new ViscaFocusAutoOn((byte)id);
-            _focusAutoOffCmd = new ViscaFocusAutoOff((byte)id);
+            _focusAutoCmd = new ViscaFocusAuto((byte)id, OnOffMode.On);
             _focusAutoToggleCmd = new ViscaFocusAutoToggle((byte)id);
             _focusAutoInquiry = new ViscaFocusAutoInquiry((byte)id, new Action<OnOffMode>(mode => { _focusAuto = mode; OnFocusAutoChanged(new OnOffEventArgs(mode)); }));
-            _focusAutoOnOffCmdReply = new Action<ViscaRxPacket>(rxPacket => { if (rxPacket.IsCompletionCommand) _visca.EnqueueCommand(_focusAutoInquiry); });
 
             _focusPositionCmd = new ViscaFocusPosition((byte)id, 0);
             _focusPositionInquiry = new ViscaFocusPositionInquiry((byte)id, new Action<int>(position => { _focusPosition = position; OnFocusPositionChanged(new PositionEventArgs(position)); }));
@@ -106,9 +102,7 @@ namespace Visca
             #region Memory Commands Constructors
 
             _memorySetCmd = new ViscaMemorySet((byte)id, 0);
-            _memorySetCmdReply = new Action<ViscaRxPacket, Object>((rxPacket, userObject) => { if (rxPacket.IsCompletionCommand) OnMemorySetComplete(new GenericEventArgs<byte>((byte)userObject)); });
             _memoryRecallCmd = new ViscaMemoryRecall((byte)id, 0);
-            _memoryRecallCmdReply = new Action<ViscaRxPacket, Object>( (rxPacket, userObject) => { if (rxPacket.IsCompletionCommand) OnMemoryRecallComplete(new GenericEventArgs<byte>((byte)userObject)); });
 
             #endregion Memory Commands Constructors
 

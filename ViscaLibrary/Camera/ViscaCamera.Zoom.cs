@@ -26,10 +26,7 @@ namespace Visca
         public byte ZoomSpeed
         {
             get { return _zoomSpeed.Value; }
-            set
-            {
-                _zoomSpeed.Value = value;
-            }
+            set { _zoomSpeed.Value = value; }
         }
 
         public void ZoomTeleWithSpeed() { _visca.EnqueueCommand(_zoomTeleWithSpeedCmd); }
@@ -42,19 +39,19 @@ namespace Visca
         protected virtual void OnZoomPositionChanged(PositionEventArgs e)
         {
             EventHandler<PositionEventArgs> handler = ZoomPositionChanged;
+#if SSHARP
             if (handler != null)
                 handler(this, e);
+#else
+            handler?.Invoke(this, e);
+#endif
         }
 
         private int _zoomPosition;
         public int ZoomPosition
         {
             get { return _zoomPosition; }
-            set
-            {
-                _visca.EnqueueCommand(_zoomPositionCmd.SetPosition(value));
-                _zoomPosition = value;
-            }
+            set { _visca.EnqueueCommand(_zoomPositionCmd.SetPosition(value).OnCompletion(() => { _zoomPosition = value; })); }
         }
 
         #endregion Zoom Commands Implementations

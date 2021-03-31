@@ -55,12 +55,10 @@ namespace Visca.Tests
         [Test]
         public async Task Power_OnWithFeedback()
         {
-            ViscaPower powerOnCmd = new ViscaPower(id, OnOffMode.On);
             bool power = false;
-            ViscaPowerInquiry powerInquiry = new ViscaPowerInquiry(id, new Action<OnOffMode>(mode => { power = mode; Console.WriteLine("Event: power: {0}", mode); }));
-            Action<ViscaRxPacket> powerOnOffCmdReply = new Action<ViscaRxPacket>(rxPacket => { if (rxPacket.IsCompletionCommand) visca.EnqueueCommand(powerInquiry); });
+            ViscaPower powerOnCmd = new ViscaPower(id, OnOffMode.On);
 
-            visca.EnqueueCommand(powerOnCmd, powerOnOffCmdReply);
+            visca.EnqueueCommand(powerOnCmd.OnCompletion(() => { power = true; }));
 
             Assert.That(sendQueue.TryTake(out byte[] powerPacket, 100), Is.True, "Timeout on sending data for Power On");
             Assert.That(powerPacket.SequenceEqual(new byte[] { 0x81, 0x01, 0x04, 0x00, 0x02, 0xff }), Is.True, "Power On bytes sequence does not match expected");
@@ -68,7 +66,8 @@ namespace Visca.Tests
             // Respond Completion
             visca.ProcessIncomingData(new byte[] { 0x90, 0x50, 0xFF });
 
-            // Next should be Power Inquiry
+            ViscaPowerInquiry powerInquiry = new ViscaPowerInquiry(id, new Action<OnOffMode>(mode => { power = mode; Console.WriteLine("Event: power: {0}", mode); }));
+            visca.EnqueueCommand(powerInquiry);
             Assert.That(sendQueue.TryTake(out byte[] powerInquiryPacket, 100), Is.True, "Timeout on sending data for Power Inquiry");
             Assert.That(powerInquiryPacket.SequenceEqual(new byte[] { 0x81, 0x09, 0x04, 0x00, 0xff }), Is.True, "Power Inquiry bytes sequence does not match expected");
 

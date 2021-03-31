@@ -72,11 +72,11 @@ namespace Visca
         private int _incomingBufferLength = 0;
 
 #if SSHARP
-        private readonly CrestronQueue<SendQueueItem> _sendQueue = new CrestronQueue<SendQueueItem>(15);
-        private CrestronQueue<ViscaRxPacket> _responseQueue = new CrestronQueue<ViscaRxPacket>(15);
+        private readonly CrestronQueue<ViscaTxPacket> _sendQueue = new CrestronQueue<ViscaTxPacket>(15);
+        private readonly CrestronQueue<ViscaRxPacket> _responseQueue = new CrestronQueue<ViscaRxPacket>(15);
         private CTimer _sendQueueItemInProgressTimer;
 #else
-        private readonly BlockingCollection<SendQueueItem> _sendQueue = new BlockingCollection<SendQueueItem>(15);
+        private readonly BlockingCollection<ViscaTxPacket> _sendQueue = new BlockingCollection<ViscaTxPacket>(15);
         private readonly BlockingCollection<ViscaRxPacket> _responseQueue = new BlockingCollection<ViscaRxPacket>(15);
         private readonly CancellationTokenSource _responseQueueCancel = new CancellationTokenSource();
         private readonly Timer _sendQueueItemInProgressTimer;
@@ -84,7 +84,7 @@ namespace Visca
         /// <summary>
         /// Holds currently submited command
         /// </summary>
-        private SendQueueItem _sendQueueItemInProgress;
+        private ViscaTxPacket _sendQueueCommandInProgress;
         /// <summary>
         /// Holds socket number for command sent to camera
         /// </summary>
@@ -119,7 +119,7 @@ namespace Visca
 #else
             _sendQueueItemInProgressTimer = new Timer((o) => 
                 {
-                    _sendQueueItemInProgress = null;
+                    _sendQueueCommandInProgress = null;
                     logMessage(1, "Command timeout"); 
                     sendNextQueuedCommand();
                 }, null, Timeout.Infinite, Timeout.Infinite);
@@ -138,24 +138,12 @@ namespace Visca
 
         public void EnqueueCommand(ViscaTxPacket command)
         {
-            EnqueueCommand(command, null);
-        }
-
-        public void EnqueueCommand(ViscaTxPacket command, Action<ViscaRxPacket> reply)
-        {
-            Action<ViscaRxPacket, Object> replyWithUserObject = null;
-            if (reply != null)
-                replyWithUserObject = new Action<ViscaRxPacket, object>((p, o) => reply(p));
-            EnqueueCommand(command, replyWithUserObject, null);
-        }
-
-        public void EnqueueCommand(ViscaTxPacket command, Action<ViscaRxPacket, Object> replyWithUserObjectreply, Object userObject)
-        {
             // check for existing command in the Queue
             bool commandIsEnqueued = false;
             foreach (var sendQueueItem in _sendQueue)
             {
-                if (sendQueueItem.Packet == command)
+                //if (sendQueueItem.Packet == command)
+                if (sendQueueItem == command)
                 {
                     commandIsEnqueued = true;
                     break;
@@ -167,17 +155,17 @@ namespace Visca
                 logMessage(1, "Enqueueing command '{0}' is duplicate, skipping. CommandQueue Size: '{1}'", command.ToString(), _sendQueue.Count);
                 logMessage(2, "CommandQueue:");
                 foreach(var sendQueueItem in _sendQueue)
-                    logMessage(2, "\t'{0}'", sendQueueItem.Packet.ToString());
+                    logMessage(2, "\t'{0}'", sendQueueItem.ToString());
             }
             else
             {
                 // If command is ViscaDynamicCommand, clone it to get static version for enquing
                 if (command is ViscaDynamicCommand)
                     command = (command as ViscaDynamicCommand).Clone();
-                _sendQueue.Enqueue(new SendQueueItem(command, replyWithUserObjectreply, userObject));
+                _sendQueue.Enqueue(command);
             }
 
-            if (_sendQueueItemInProgress == null && (_responseQueue.Count == 0))
+            if (_sendQueueCommandInProgress == null && (_responseQueue.Count == 0))
                 sendNextQueuedCommand();
         }
 
@@ -191,10 +179,10 @@ namespace Visca
 
         public void CancelCommand()
         {
-            if(_socketInProgress.HasValue && _sendQueueItemInProgress != null && _sendQueueItemInProgress.Packet.IsCommand)
+            if(_socketInProgress.HasValue && _sendQueueCommandInProgress != null && _sendQueueCommandInProgress.IsCommand)
             {
-                logMessage(1, "Command '{0}' canceling on socket '{1}'", _sendQueueItemInProgress.Packet.ToString(), _socketInProgress.Value);
-                _sendData(new byte[] { (byte)(0x80 + _sendQueueItemInProgress.Packet.Destination), (byte)(0x20 + _socketInProgress.Value), 0xFF});
+                logMessage(1, "Command '{0}' canceling on socket '{1}'", _sendQueueCommandInProgress.ToString(), _socketInProgress.Value);
+                _sendData(new byte[] { (byte)(0x80 + _sendQueueCommandInProgress.Destination), (byte)(0x20 + _socketInProgress.Value), 0xFF});
             }
         }
 
@@ -205,15 +193,15 @@ namespace Visca
         {
             if (_sendQueue.Count > 0)
             {
-                _sendQueueItemInProgress = _sendQueue.Dequeue();
-                logMessage(1, "Command '{0}' Dequeued. CommandQueue Size: {1}", _sendQueueItemInProgress.Packet.ToString(), _sendQueue.Count);
+                _sendQueueCommandInProgress = _sendQueue.Dequeue();
+                logMessage(1, "Command '{0}' Dequeued. CommandQueue Size: {1}", _sendQueueCommandInProgress.ToString(), _sendQueue.Count);
                 // start the timer to expire current command in case of no response
 #if SSHARP
                 _sendQueueItemInProgressTimer.Reset(2000);
 #else
                 _sendQueueItemInProgressTimer.Change(2000, Timeout.Infinite);
 #endif
-                _sendData(_sendQueueItemInProgress.Packet);
+                _sendData(_sendQueueCommandInProgress);
             }
         }
 
@@ -251,7 +239,7 @@ namespace Visca
                     }
 
 
-                    if (_sendQueueItemInProgress == null)
+                    if (_sendQueueCommandInProgress == null)
                     {
                         /// response is not associated with any particular command
                         logMessage(2, "Collision, response for command not in progress");
@@ -266,21 +254,21 @@ namespace Visca
                         if (rxPacket.IsAck)
                         {
                             _socketInProgress = rxPacket.Socket;
-                            logMessage(1, "Command '{0}' accepted on socket '{1}'", _sendQueueItemInProgress.Packet.ToString(), _socketInProgress.Value);
+                            logMessage(1, "Command '{0}' accepted on socket '{1}'", _sendQueueCommandInProgress.ToString(), _socketInProgress.Value);
                             continue;
                         } // rxPacket.IsAck
                         else  if (rxPacket.IsCompletionCommand)
                         {
-                            if (!_sendQueueItemInProgress.Packet.IsCommand)
+                            if (!_sendQueueCommandInProgress.IsCommand)
                                 logMessage(2, "Collision, completion message is not for Command type message");
-                            ViscaCommand command = _sendQueueItemInProgress.Packet as ViscaCommand;
+                            ViscaCommand command = _sendQueueCommandInProgress as ViscaCommand;
                             if (command != null && command.CompletionAction != null)
                                 command.CompletionAction();
                         } // rxPacket.IsCompletionCommand
                         else if (rxPacket.IsCompletionInquiry)
                         {
                             // we have pending clearance command in progress, use it's processing hook
-                            var query = _sendQueueItemInProgress.Packet as ViscaInquiry;
+                            var query = _sendQueueCommandInProgress as ViscaInquiry;
                             if(query != null)
                                 query.Process(rxPacket);
                             else
@@ -317,10 +305,10 @@ namespace Visca
                                     break;
                             }
 #if SSHARP
-                            if (_sendQueueItemInProgress.Packet.ErrorAction != null)
-                                _sendQueueItemInProgress.Packet.ErrorAction(rxPacket.Error);
+                            if (_sendQueueItemInProgress.ErrorAction != null)
+                                _sendQueueItemInProgress.ErrorAction(rxPacket.Error);
 #else
-                            _sendQueueItemInProgress.Packet.ErrorAction?.Invoke(rxPacket.Error);
+                            _sendQueueCommandInProgress.ErrorAction?.Invoke(rxPacket.Error);
 #endif
                         } // rxPacket.IsError
                         else
@@ -328,15 +316,8 @@ namespace Visca
                             logMessage(1, "Error: unknown packet type");
                         }
 
-#if SSHARP
-                        if (_sendQueueItemInProgress.Reply != null)
-                            _sendQueueItemInProgress.Reply(rxPacket, _sendQueueItemInProgress.UserObject);
-#else
-                        _sendQueueItemInProgress.Reply?.Invoke(rxPacket, _sendQueueItemInProgress.UserObject);
-#endif
-
-                        logMessage(2, "Completing command in progress: '{0}'", _sendQueueItemInProgress.Packet.ToString());
-                        _sendQueueItemInProgress = null;
+                        logMessage(2, "Completing command in progress: '{0}'", _sendQueueCommandInProgress.ToString());
+                        _sendQueueCommandInProgress = null;
                         _socketInProgress = null;
                     }
                 }

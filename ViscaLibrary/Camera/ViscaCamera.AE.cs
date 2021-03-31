@@ -8,8 +8,6 @@ namespace Visca
 
         private readonly ViscaAEMode _aeCmd;
         private readonly ViscaAEInquiry _aeInquiry;
-        //private readonly Action<ViscaRxPacket> _aeCmdReply;
-        //private readonly Action _aeCmdCompletion = () => { _ae = _aePending; };
 
         #endregion AE Commands Definition
 
@@ -29,15 +27,11 @@ namespace Visca
         }
 
         private AEMode _ae;
-        //private AEMode _aePending;
+
         public AEMode AE
         {
             get { return _ae; }
-            set
-            {
-                //_aePending = value;
-                _visca.EnqueueCommand(_aeCmd.SetMode(value), (rx) => { _ae = value; });
-            }
+            set { _visca.EnqueueCommand(_aeCmd.SetMode(value).OnCompletion(() => { _ae = value; })); }
         }
 
         #endregion AE Commands Implementations

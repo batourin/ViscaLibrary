@@ -9,7 +9,11 @@ namespace Visca
     /// </summary>
     public class ViscaCommand: ViscaTxPacket
     {
-        public readonly Action CompletionAction;
+        /// <summary>
+        /// Filed containing action to be executed when ViscaProtocolProcessor
+        /// recieves Completion message
+        /// </summary>
+        public Action CompletionAction;
 
         /// <summary>
         /// Broadcast command
@@ -38,6 +42,8 @@ namespace Visca
             CompletionAction = completionAction;
             Append(Visca.Command);
         }
+
+        public ViscaCommand OnCompletion(Action completionAction) { CompletionAction = completionAction; return this; }
 
         public ViscaCommand Clone()
         {

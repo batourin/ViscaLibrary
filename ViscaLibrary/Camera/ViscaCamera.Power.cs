@@ -8,7 +8,6 @@ namespace Visca
 
         private readonly ViscaPower _powerCmd;
         private readonly ViscaPowerInquiry _powerInquiry;
-        //private readonly Action<ViscaRxPacket> _powerOnOffCmdReply;
 
         #endregion Power Commands Definition
 
@@ -34,9 +33,9 @@ namespace Visca
             set
             {
                 if (value)
-                    _visca.EnqueueCommand(_powerCmd.SetMode(OnOffMode.On), (rx) => { _power = value; });
+                    _visca.EnqueueCommand(_powerCmd.SetMode(OnOffMode.On).OnCompletion(() => { _power = value; }));
                 else
-                    _visca.EnqueueCommand(_powerCmd.SetMode(OnOffMode.Off), (rx) => { _power = value; });
+                    _visca.EnqueueCommand(_powerCmd.SetMode(OnOffMode.Off).OnCompletion(() => { _power = value; }));
             }
         }
 
