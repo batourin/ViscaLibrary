@@ -57,6 +57,14 @@ namespace Visca
 
             #endregion AE Commands Constructors
 
+            #region Aperture Commands Constructors
+
+            _apertureCmd = new ViscaAperture((byte)id, UpDownMode.Up);
+            _apertureValueCmd = new ViscaApertureValue((byte)id, 0);
+            _apertureInquiry = new ViscaApertureInquiry((byte)id, new Action<int>(position => { _aperture = position; OnApertureChanged(new PositionEventArgs(position)); }));
+
+            #endregion Aperture Commands Constructors
+
             #region Power Commands Constructors
 
             _powerCmd = new ViscaPower((byte)id, OnOffMode.On);
@@ -125,6 +133,8 @@ namespace Visca
 
             #endregion PTZ Commands Constructors
 
+            _pollCommands.Add(_aeInquiry);
+            _pollCommands.Add(_apertureInquiry);
             _pollCommands.Add(_powerInquiry);
             _pollCommands.Add(_zoomPositionInquiry);
             _pollCommands.Add(_focusAutoInquiry);
