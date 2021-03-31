@@ -15,61 +15,60 @@ namespace Visca
 
     public abstract class ViscaValueInquiry : ViscaInquiry
     {
-        private readonly Action<byte> _action;
-        public ViscaValueInquiry(byte address, Action<byte> action)
+        private readonly Action<byte> _completionAction;
+        public ViscaValueInquiry(byte address, Action<byte> completionAction)
         : base(address)
         {
-            _action = action;
+            _completionAction = completionAction;
         }
 
         public override void Process(ViscaRxPacket viscaRxPacket)
         {
 #if SSHARP
-            if (_action != null)
-                _action(viscaRxPacket.PayLoad[0]);
+            if (_completionAction != null)
+                _completionAction(viscaRxPacket.PayLoad[0]);
 #else
-            _action?.Invoke(viscaRxPacket.PayLoad[0]);
+            _completionAction?.Invoke(viscaRxPacket.PayLoad[0]);
 #endif
         }
     }
 
     public abstract class ViscaOnOffInquiry: ViscaInquiry
     {
-        private readonly Action<bool> _action;
-        public ViscaOnOffInquiry(byte address, Action<bool> action)
+        private readonly Action<bool> _completionAction;
+        public ViscaOnOffInquiry(byte address, Action<bool> completionAction)
         : base(address)
         {
-            _action = action;
+            _completionAction = completionAction;
         }
 
         public override void Process(ViscaRxPacket viscaRxPacket)
         {
-            if (_action != null)
-            {
-                if (viscaRxPacket.PayLoad[0] == Visca.On)
-                    _action(true);
-                else if (viscaRxPacket.PayLoad[0] == Visca.Off)
-                    _action(false);
-            }
+#if SSHARP
+            if (_completionAction != null)
+                _completionAction(viscaRxPacket.PayLoad[0] == Visca.On);
+#else
+            _completionAction?.Invoke(viscaRxPacket.PayLoad[0] == Visca.On);
+#endif
         }
     }
 
     public abstract class ViscaPositionInquiry : ViscaInquiry
     {
-        private readonly Action<int> _action;
-        public ViscaPositionInquiry(byte address, Action<int> action)
+        private readonly Action<int> _completionAction;
+        public ViscaPositionInquiry(byte address, Action<int> completionAction)
         : base(address)
         {
-            _action = action;
+            _completionAction = completionAction;
         }
 
         public override void Process(ViscaRxPacket viscaRxPacket)
         {
-            if (_action != null)
+            if (_completionAction != null)
             {
                 if (viscaRxPacket.PayLoad.Length == 4)
                 {
-                    _action( (viscaRxPacket.PayLoad[0] << 12) +
+                    _completionAction( (viscaRxPacket.PayLoad[0] << 12) +
                              (viscaRxPacket.PayLoad[1] << 8) +
                              (viscaRxPacket.PayLoad[2] << 4) +
                               viscaRxPacket.PayLoad[3]
@@ -82,20 +81,20 @@ namespace Visca
     }
     public abstract class Visca2DPositionInquiry : ViscaInquiry
     {
-        private readonly Action<int, int> _action;
-        public Visca2DPositionInquiry(byte address, Action<int, int> action)
+        private readonly Action<int, int> _completionAction;
+        public Visca2DPositionInquiry(byte address, Action<int, int> completionAction)
         : base(address)
         {
-            _action = action;
+            _completionAction = completionAction;
         }
 
         public override void Process(ViscaRxPacket viscaRxPacket)
         {
-            if (_action != null)
+            if (_completionAction != null)
             {
                 if (viscaRxPacket.PayLoad.Length == 8)
                 {
-                    _action(
+                    _completionAction(
                             (viscaRxPacket.PayLoad[0] << 12) +
                             (viscaRxPacket.PayLoad[1] << 8) +
                             (viscaRxPacket.PayLoad[2] << 4) +
@@ -133,23 +132,25 @@ namespace Visca
 
     public class ViscaModeInquiry<T> : ViscaInquiry where T : EnumBaseType<T>
     {
-        private readonly Action<T> _action;
+        private readonly Action<T> _completionAction;
         private readonly string _commandName;
 
-        public ViscaModeInquiry(byte address, byte[] commands, string commandName, Action<T> action)
+        public ViscaModeInquiry(byte address, byte[] commands, string commandName, Action<T> completionAction)
         : base(address)
         {
             Append(commands);
             _commandName = commandName;
-            _action = action;
+            _completionAction = completionAction;
         }
 
         public override void Process(ViscaRxPacket viscaRxPacket)
         {
-            if (_action != null)
-            {
-                _action(EnumBaseType<T>.GetByKey(viscaRxPacket.PayLoad[0]));
-            }
+#if SSHARP
+            if (_completionAction != null)
+                _completionAction(EnumBaseType<T>.GetByKey(viscaRxPacket.PayLoad[0]));
+#else
+            _completionAction?.Invoke(EnumBaseType<T>.GetByKey(viscaRxPacket.PayLoad[0]));
+#endif
         }
 
         public override string ToString()

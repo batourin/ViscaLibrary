@@ -19,7 +19,8 @@ namespace Visca
         #region Memory Commands Implementations
 
         public void MemorySet(byte preset) { _visca.EnqueueCommand(_memorySetCmd.UsePreset(preset), _memorySetCmdReply, preset); }
-        public void MemoryRecall(byte preset) { _visca.EnqueueCommand(_memoryRecallCmd.UsePreset(preset), _memoryRecallCmdReply, preset); }
+        //public void MemoryRecall(byte preset) { _visca.EnqueueCommand(_memoryRecallCmd.UsePreset(preset), _memoryRecallCmdReply, preset); }
+        public void MemoryRecall(byte preset) { _visca.EnqueueCommand(_memoryRecallCmd.UsePreset(preset), (rx) => { OnMemoryRecallComplete(new GenericEventArgs<byte>(preset)); }); }
 
         protected virtual void OnMemorySetComplete(GenericEventArgs<byte> e)
         {

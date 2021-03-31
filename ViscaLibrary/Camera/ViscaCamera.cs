@@ -35,6 +35,8 @@ namespace Visca
         private readonly ViscaCameraId _id;
         private readonly ViscaCameraParameters _parameters;
         private readonly ViscaProtocolProcessor _visca;
+        private readonly List<ViscaInquiry> _pollCommands;
+
 
         public ViscaCamera(ViscaCameraId id, ViscaCameraParameters parameters, ViscaProtocolProcessor visca)
         {
@@ -46,13 +48,21 @@ namespace Visca
                 _parameters = parameters;
             
             _visca = visca;
+            _pollCommands = new List<ViscaInquiry>();
+
+            #region AE Commands Constructors
+
+            _aeCmd = new ViscaAEMode((byte)id, AEMode.FullAuto);
+            _aeInquiry = new ViscaAEInquiry((byte)id, new Action<AEMode>(mode => { _ae = mode; OnAEChanged(new GenericEventArgs<AEMode>(mode)); }));
+            //_aeCmdReply = new Action<ViscaRxPacket>(rxPacket => { if (rxPacket.IsCompletionCommand) _ae = _aePending; });
+
+            #endregion AE Commands Constructors
 
             #region Power Commands Constructors
 
-            _powerOnCmd = new ViscaPower((byte)id, OnOffMode.On);
-            _powerOffCmd = new ViscaPower((byte)id, OnOffMode.Off);
+            _powerCmd = new ViscaPower((byte)id, OnOffMode.On);
             _powerInquiry = new ViscaPowerInquiry((byte)id, new Action<OnOffMode>( mode => { _power = mode; OnPowerChanged(new OnOffEventArgs(mode)); }));
-            _powerOnOffCmdReply = new Action<ViscaRxPacket>( rxPacket => { if ( rxPacket.IsCompletionCommand ) _visca.EnqueueCommand(_powerInquiry); } );
+            //_powerOnOffCmdReply = new Action<ViscaRxPacket>( rxPacket => { if ( rxPacket.IsCompletionCommand ) _visca.EnqueueCommand(_powerInquiry); } );
 
             #endregion Power Commands Constructors
 
@@ -121,6 +131,10 @@ namespace Visca
 
             #endregion PTZ Commands Constructors
 
+            _pollCommands.Add(_powerInquiry);
+            _pollCommands.Add(_zoomPositionInquiry);
+            _pollCommands.Add(_focusAutoInquiry);
+            _pollCommands.Add(_focusPositionInquiry);
         }
 
         public override string ToString()
@@ -128,7 +142,7 @@ namespace Visca
             StringBuilder sb = new StringBuilder();
 
             sb.AppendFormat("ViscaCamera: {0}\r\n", (byte)_id);
-            sb.AppendFormat("\tPower: {0:X1}\r\n", Power);
+            sb.AppendFormat("\tPower: {0}\r\n", Power?"ON":"OFF");
 
             return sb.ToString();
         }

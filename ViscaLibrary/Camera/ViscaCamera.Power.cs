@@ -6,10 +6,9 @@ namespace Visca
     {
         #region Power Commands Definition
 
-        private readonly ViscaPower _powerOnCmd;
-        private readonly ViscaPower _powerOffCmd;
+        private readonly ViscaPower _powerCmd;
         private readonly ViscaPowerInquiry _powerInquiry;
-        private readonly Action<ViscaRxPacket> _powerOnOffCmdReply;
+        //private readonly Action<ViscaRxPacket> _powerOnOffCmdReply;
 
         #endregion Power Commands Definition
 
@@ -20,8 +19,12 @@ namespace Visca
         protected virtual void OnPowerChanged(OnOffEventArgs e)
         {
             EventHandler<OnOffEventArgs> handler = PowerChanged;
+#if SSHARP
             if (handler != null)
                 handler(this, e);
+#else
+            handler?.Invoke(this, e);
+#endif
         }
 
         private bool _power;
@@ -31,9 +34,9 @@ namespace Visca
             set
             {
                 if (value)
-                    _visca.EnqueueCommand(_powerOnCmd, _powerOnOffCmdReply);
+                    _visca.EnqueueCommand(_powerCmd.SetMode(OnOffMode.On), (rx) => { _power = value; });
                 else
-                    _visca.EnqueueCommand(_powerOffCmd, _powerOnOffCmdReply);
+                    _visca.EnqueueCommand(_powerCmd.SetMode(OnOffMode.Off), (rx) => { _power = value; });
             }
         }
 

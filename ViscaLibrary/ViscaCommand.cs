@@ -9,6 +9,7 @@ namespace Visca
     /// </summary>
     public class ViscaCommand: ViscaTxPacket
     {
+        public readonly Action CompletionAction;
 
         /// <summary>
         /// Broadcast command
@@ -24,14 +25,23 @@ namespace Visca
         /// </summary>
         /// <param name="address">camera Id 0-7</param>
         public ViscaCommand(byte address)
-            : base(address)
+            : this(address, null, null)
+        { }
+
+        /// <summary>
+        /// Addressed command with Completion and Error actions
+        /// </summary>
+        /// <param name="address">camera Id 0-7</param>
+        public ViscaCommand(byte address, Action completionAction, Action<ViscaError> errorAction)
+            : base(address, errorAction)
         {
+            CompletionAction = completionAction;
             Append(Visca.Command);
         }
 
         public ViscaCommand Clone()
         {
-            ViscaCommand clone = new ViscaCommand(0);
+            ViscaCommand clone = new ViscaCommand(0, CompletionAction, ErrorAction);
             clone._bytes[0] = 2;
             Array.Copy(_bytes, clone._bytes, _bytes.Length);
             clone.Length = Length;

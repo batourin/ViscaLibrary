@@ -15,6 +15,11 @@ namespace Visca
         private byte _length = 1;
 
         /// <summary>
+        /// Action to be excuted when command fail
+        /// </summary>
+        public readonly Action<ViscaError> ErrorAction;
+
+        /// <summary>
         /// Construcot for broadcast command
         /// </summary>
         public ViscaTxPacket()
@@ -28,9 +33,14 @@ namespace Visca
         /// </summary>
         /// <param name="address">camera id - 0-7</param>
         public ViscaTxPacket(byte address)
+            : this(address, null)
+        { }
+
+        public ViscaTxPacket(byte address, Action<ViscaError> errorAction)
             : base(null)
         {
             _bytes[0] = (byte)(0x80 + address);
+            ErrorAction = errorAction;
         }
 
         public bool IsCommand { get { return _bytes[1] == Visca.Command; } }

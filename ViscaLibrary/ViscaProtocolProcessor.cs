@@ -273,12 +273,9 @@ namespace Visca
                         {
                             if (!_sendQueueItemInProgress.Packet.IsCommand)
                                 logMessage(2, "Collision, completion message is not for Command type message");
-#if SSHARP
-                            if (_sendQueueItemInProgress.Reply != null)
-                                _sendQueueItemInProgress.Reply(rxPacket, _sendQueueItemInProgress.UserObject);
-#else
-                            _sendQueueItemInProgress.Reply?.Invoke(rxPacket, _sendQueueItemInProgress.UserObject);
-#endif
+                            ViscaCommand command = _sendQueueItemInProgress.Packet as ViscaCommand;
+                            if (command != null && command.CompletionAction != null)
+                                command.CompletionAction();
                         } // rxPacket.IsCompletionCommand
                         else if (rxPacket.IsCompletionInquiry)
                         {
@@ -319,6 +316,12 @@ namespace Visca
                                     logMessage(2, "Error from device: Command not executable");
                                     break;
                             }
+#if SSHARP
+                            if (_sendQueueItemInProgress.Packet.ErrorAction != null)
+                                _sendQueueItemInProgress.Packet.ErrorAction(rxPacket.Error);
+#else
+                            _sendQueueItemInProgress.Packet.ErrorAction?.Invoke(rxPacket.Error);
+#endif
                         } // rxPacket.IsError
                         else
                         {
