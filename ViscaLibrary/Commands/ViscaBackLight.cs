@@ -2,9 +2,9 @@
 
 namespace Visca
 {
-    public class ViscaBackLightMode : ViscaModeCommand<OnOffMode>
+    public class ViscaBackLight : ViscaModeCommand<OnOffMode>
     {
-        public ViscaBackLightMode(byte address, OnOffMode mode)
+        public ViscaBackLight(byte address, OnOffMode mode)
             : base(address, new byte[] { Visca.Category.Camera1, Visca.Commands.BackLight }, "BackLight", mode)
         { }
 
