@@ -65,6 +65,13 @@ namespace Visca
 
             #endregion Aperture Commands Constructors
 
+            #region BackLight Commands Constructors
+
+            _backLightCmd = new ViscaBackLight((byte)id, OnOffMode.On);
+            _backLightInquiry = new ViscaBackLightInquiry((byte)id, new Action<OnOffMode>(mode => { _backLight = mode; OnPowerChanged(new OnOffEventArgs(mode)); }));
+
+            #endregion BackLight Commands Constructors
+
             #region Power Commands Constructors
 
             _powerCmd = new ViscaPower((byte)id, OnOffMode.On);
@@ -135,6 +142,7 @@ namespace Visca
 
             _pollCommands.Add(_aeInquiry);
             _pollCommands.Add(_apertureInquiry);
+            _pollCommands.Add(_backLightInquiry);
             _pollCommands.Add(_powerInquiry);
             _pollCommands.Add(_zoomPositionInquiry);
             _pollCommands.Add(_focusAutoInquiry);
