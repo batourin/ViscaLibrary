@@ -88,6 +88,14 @@ namespace Visca
 
             #endregion Gain Commands Constructors
 
+            #region Iris Commands Constructors
+
+            _irisCmd = new ViscaIris((byte)id, UpDownMode.Up);
+            _irisValueCmd = new ViscaIrisValue((byte)id, 0);
+            _irisInquiry = new ViscaIrisInquiry((byte)id, new Action<int>(position => { _iris = position; OnIrisChanged(new PositionEventArgs(position)); }));
+
+            #endregion Gain Commands Constructors
+
             #region Power Commands Constructors
 
             _powerCmd = new ViscaPower((byte)id, OnOffMode.On);

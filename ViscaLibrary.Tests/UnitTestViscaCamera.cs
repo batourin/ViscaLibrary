@@ -60,7 +60,6 @@ namespace Visca.Tests
                 //monitoredSubject.Should().Raise("MemoryRecallComplete").WithSender(camera).WithArgs<ViscaCamera.GenericEventArgs<byte>>(args => args.EventData == 1);
                 camera.AE.Should().Be(AEMode.GainAuto);
             }
-
         }
     }
 }
