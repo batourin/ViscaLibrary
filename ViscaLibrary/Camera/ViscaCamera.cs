@@ -167,6 +167,10 @@ namespace Visca
             _pollCommands.Add(_aeInquiry);
             _pollCommands.Add(_apertureInquiry);
             _pollCommands.Add(_backLightInquiry);
+            _pollCommands.Add(_expCompInquiry);
+            _pollCommands.Add(_gainInquiry);
+            _pollCommands.Add(_irisInquiry);
+            _pollCommands.Add(_muteInquiry);
             _pollCommands.Add(_powerInquiry);
             _pollCommands.Add(_zoomPositionInquiry);
             _pollCommands.Add(_focusAutoInquiry);
