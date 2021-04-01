@@ -80,6 +80,14 @@ namespace Visca
 
             #endregion ExpComp Commands Constructors
 
+            #region Gain Commands Constructors
+
+            _gainCmd = new ViscaGain((byte)id, UpDownMode.Up);
+            _gainValueCmd = new ViscaGainValue((byte)id, 0);
+            _gainInquiry = new ViscaGainInquiry((byte)id, new Action<int>(position => { _gain = position; OnGainChanged(new PositionEventArgs(position)); }));
+
+            #endregion Gain Commands Constructors
+
             #region Power Commands Constructors
 
             _powerCmd = new ViscaPower((byte)id, OnOffMode.On);
