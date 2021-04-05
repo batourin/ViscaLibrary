@@ -183,6 +183,13 @@ namespace Visca
 
             #endregion Gain Commands Constructors
 
+            #region Title Commands Constructors
+
+            _titleCmd = new ViscaTitle((byte)id, OnOffMode.On);
+            _titleInquiry = new ViscaTitleInquiry((byte)id, new Action<OnOffMode>(mode => { updateTitle(mode); }));
+
+            #endregion Power Commands Constructors
+
             #region Zoom Commands Constructors
 
             _zoomStopCmd = new ViscaZoomStop((byte)id);
@@ -210,6 +217,7 @@ namespace Visca
             _pollCommands.Add(_ptzPositionInquiry);
             _pollCommands.Add(_rGainInquiry);
             _pollCommands.Add(_shutterInquiry);
+            _pollCommands.Add(_titleInquiry);
             _pollCommands.Add(_zoomPositionInquiry);
         }
 
