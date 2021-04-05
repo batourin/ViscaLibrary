@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 #if SSHARP
 using Crestron.SimplSharp;
@@ -48,24 +46,6 @@ namespace Visca
 
     public class ViscaProtocolProcessor
     {
-        /// <summary>
-        /// Holds require Command, optional Completion or InquiryCompletion 
-        /// action and UserObject to be passed to completion action
-        /// </summary>
-        private class SendQueueItem
-        {
-            public readonly ViscaTxPacket Packet;
-            public readonly Action<ViscaRxPacket, Object> Reply;
-            public readonly Object UserObject;
-
-            public SendQueueItem(ViscaTxPacket packet, Action<ViscaRxPacket, Object> reply, Object userObject)
-            {
-                Packet = packet;
-                Reply = reply;
-                UserObject = userObject;
-            }
-        }
-
         private readonly Dictionary<ViscaCameraId, ViscaCamera> _cameras = new Dictionary<ViscaCameraId, ViscaCamera>(7);
 
         private readonly byte[] _incomingBuffer = new byte[1024];
@@ -110,19 +90,18 @@ namespace Visca
             Cameras = new CamerasIndexer(getCameraAction);
 #if SSHARP
             _sendQueueItemInProgressTimer = new CTimer((o) => 
-                {
-                    _sendQueueItemInProgress = null;
-                    _logAction(1, "Command timeout", null); 
-                    sendNextQueuedCommand();
-                }, Timeout.Infinite);
-            _responseParseThread = new Thread(parseResponse, null, Thread.eThreadStartOptions.Running);
 #else
-            _sendQueueItemInProgressTimer = new Timer((o) => 
+            _sendQueueItemInProgressTimer = new Timer((o) =>
+#endif
                 {
                     _sendQueueCommandInProgress = null;
                     logMessage(1, "Command timeout"); 
                     sendNextQueuedCommand();
                 }, null, Timeout.Infinite, Timeout.Infinite);
+
+#if SSHARP
+            _responseParseThread = new Thread(parseResponse, null, Thread.eThreadStartOptions.Running);
+#else
             _responseParseThread = new Thread(parseResponse);
             _responseParseThread.Start();
 #endif
@@ -305,8 +284,8 @@ namespace Visca
                                     break;
                             }
 #if SSHARP
-                            if (_sendQueueItemInProgress.ErrorAction != null)
-                                _sendQueueItemInProgress.ErrorAction(rxPacket.Error);
+                            if (_sendQueueCommandInProgress.ErrorAction != null)
+                                _sendQueueCommandInProgress.ErrorAction(rxPacket.Error);
 #else
                             _sendQueueCommandInProgress.ErrorAction?.Invoke(rxPacket.Error);
 #endif
@@ -344,7 +323,7 @@ namespace Visca
 #endif
         }
 
-        #region Cameras
+#region Cameras
 
         public bool Attach(ViscaCameraId id, ViscaCamera camera)
         {
@@ -381,9 +360,9 @@ namespace Visca
 
         public readonly CamerasIndexer Cameras;
 
-        #endregion Cameras
+#endregion Cameras
 
-        #region IO processing
+#region IO processing
 
         /// <summary>
         /// Process Visca byte stream
