@@ -202,14 +202,15 @@ namespace Visca
             _pollCommands.Add(_bGainInquiry);
             _pollCommands.Add(_expCompInquiry);
             _pollCommands.Add(_gainInquiry);
+            _pollCommands.Add(_focusAutoInquiry);
+            _pollCommands.Add(_focusPositionInquiry);
             _pollCommands.Add(_irisInquiry);
             _pollCommands.Add(_muteInquiry);
             _pollCommands.Add(_powerInquiry);
             _pollCommands.Add(_ptzPositionInquiry);
             _pollCommands.Add(_rGainInquiry);
+            _pollCommands.Add(_shutterInquiry);
             _pollCommands.Add(_zoomPositionInquiry);
-            _pollCommands.Add(_focusAutoInquiry);
-            _pollCommands.Add(_focusPositionInquiry);
         }
 
         public override string ToString()
