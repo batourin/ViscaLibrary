@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+#if SSHARP
+using Crestron.SimplSharp;
+#else
+using System.Threading;
+#endif
 
 namespace Visca
 {
@@ -37,6 +41,14 @@ namespace Visca
         private readonly ViscaProtocolProcessor _visca;
         private readonly List<ViscaInquiry> _pollCommands;
 
+        /// <summary>
+        /// Poll timer controls how often poll camera
+        /// </summary>
+#if SSHARP
+        private readonly CTimer _pollTimer;
+#else
+        private readonly Timer _pollTimer;
+#endif
 
         public ViscaCamera(ViscaCameraId id, ViscaCameraParameters parameters, ViscaProtocolProcessor visca)
         {
@@ -48,7 +60,17 @@ namespace Visca
                 _parameters = parameters;
             
             _visca = visca;
+
             _pollCommands = new List<ViscaInquiry>();
+
+#if SSHARP
+            _pollTimer = new CTimer((o) => 
+#else
+            _pollTimer = new Timer((o) =>
+#endif
+                {
+                    Poll();
+                }, null, Timeout.Infinite, Timeout.Infinite);
 
             #region AE Commands Constructors
 
@@ -236,6 +258,48 @@ namespace Visca
             _pollCommands.Add(_wideDynamicInquiry);
             _pollCommands.Add(_zoomPositionInquiry);
         }
+
+        #region Polling commands
+
+        /// <summary>
+        /// Enable or Disable Poll option
+        /// </summary>
+        public bool PollEnabled { get; set; }
+
+        private int _pollTime = Timeout.Infinite;
+        /// <summary>
+        /// Poll interval for automatic polling
+        /// </summary>
+        public int PollTime
+        {
+            get { return _pollTime; }
+            set 
+            {
+                if(_pollTime != value)
+                {
+                    _pollTime = value;
+#if SSHARP
+                    _pollTimer.Reset(_pollTime, _pollTime);
+#else
+                    _pollTimer.Change(_pollTime, _pollTime);
+#endif
+                }
+            }
+        }
+
+        /// <summary>
+        /// Manual Poll, have effect only if Polling Enabled
+        /// </summary>
+        public void Poll()
+        {
+            if (PollEnabled)
+            {
+                foreach (var command in _pollCommands)
+                    _visca.EnqueueCommand(command);
+            }
+        }
+
+        #endregion Polling Commands
 
         public override string ToString()
         {
