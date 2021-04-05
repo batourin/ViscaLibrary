@@ -78,10 +78,23 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Camera\ViscaCamera.cs" />
+    <Compile Include="Camera\ViscaCamera.AE.cs" />
+    <Compile Include="Camera\ViscaCamera.Aperture.cs" />
+    <Compile Include="Camera\ViscaCamera.BackLight.cs" />
+    <Compile Include="Camera\ViscaCamera.BGain.cs" />
+    <Compile Include="Camera\ViscaCamera.ExpComp.cs" />
     <Compile Include="Camera\ViscaCamera.Focus.cs" />
+    <Compile Include="Camera\ViscaCamera.Gain.cs" />
+    <Compile Include="Camera\ViscaCamera.Iris.cs" />
     <Compile Include="Camera\ViscaCamera.Memory.cs" />
+    <Compile Include="Camera\ViscaCamera.Mute.cs" />
     <Compile Include="Camera\ViscaCamera.Power.cs" />
     <Compile Include="Camera\ViscaCamera.PTZ.cs" />
+    <Compile Include="Camera\ViscaCamera.RGain.cs" />
+    <Compile Include="Camera\ViscaCamera.Shutter.cs" />
+    <Compile Include="Camera\ViscaCamera.Title.cs" />
+    <Compile Include="Camera\ViscaCamera.WB.cs" />
+    <Compile Include="Camera\ViscaCamera.WideDynamic.cs" />
     <Compile Include="Camera\ViscaCamera.Zoom.cs" />
     <Compile Include="Camera\ViscaCameraParameters.cs" />
     <Compile Include="Commands\ViscaAE.cs" />
