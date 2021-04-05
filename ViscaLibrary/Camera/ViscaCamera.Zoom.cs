@@ -15,6 +15,8 @@ namespace Visca
         private readonly ViscaZoomPosition _zoomPositionCmd;
         private readonly ViscaZoomPositionInquiry _zoomPositionInquiry;
 
+        public event EventHandler<PositionEventArgs> ZoomPositionChanged;
+
         #endregion Zoom Commands Definition
 
         #region Zoom Commands Implementations
@@ -34,8 +36,6 @@ namespace Visca
 
         public void ZoomSetPosition(int position) { _visca.EnqueueCommand(_zoomPositionCmd.SetPosition(position)); }
 
-        public event EventHandler<PositionEventArgs> ZoomPositionChanged;
-
         protected virtual void OnZoomPositionChanged(PositionEventArgs e)
         {
             EventHandler<PositionEventArgs> handler = ZoomPositionChanged;
@@ -51,7 +51,16 @@ namespace Visca
         public int ZoomPosition
         {
             get { return _zoomPosition; }
-            set { _visca.EnqueueCommand(_zoomPositionCmd.SetPosition(value).OnCompletion(() => { _zoomPosition = value; })); }
+            set { _visca.EnqueueCommand(_zoomPositionCmd.SetPosition(value).OnCompletion(() => { updateZoomPosition(value); })); }
+        }
+
+        private void updateZoomPosition(int zoomPosition)
+        {
+            if(_zoomPosition != zoomPosition)
+            {
+                _zoomPosition = zoomPosition;
+                OnZoomPositionChanged(new PositionEventArgs(zoomPosition));
+            }
         }
 
         #endregion Zoom Commands Implementations
