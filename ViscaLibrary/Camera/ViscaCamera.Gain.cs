@@ -10,14 +10,14 @@ namespace Visca
         private readonly ViscaGainValue _gainValueCmd;
         private readonly ViscaGainInquiry _gainInquiry;
 
+        public event EventHandler<PositionEventArgs> GainChanged;
+
         #endregion Gain Commands Definition
 
         #region Gain Commands Implementations
 
         public void GainUp() { _visca.EnqueueCommand(_gainCmd.SetMode(UpDownMode.Up)); }
         public void GainDown() { _visca.EnqueueCommand(_gainCmd.SetMode(UpDownMode.Down)); }
-
-        public event EventHandler<PositionEventArgs> GainChanged;
 
         protected virtual void OnGainChanged(PositionEventArgs e)
         {
@@ -35,7 +35,16 @@ namespace Visca
         public int Gain
         {
             get { return _gain; }
-            set { _visca.EnqueueCommand(_gainValueCmd.SetPosition(value).OnCompletion(() => { _gain = value; })); }
+            set { _visca.EnqueueCommand(_gainValueCmd.SetPosition(value).OnCompletion(() => { updateGain(value); })); }
+        }
+
+        private void updateGain(int gain)
+        {
+            if(_gain != gain)
+            {
+                _gain = gain;
+                OnGainChanged(new PositionEventArgs(gain));
+            }
         }
 
         #endregion Gain Commands Implementations

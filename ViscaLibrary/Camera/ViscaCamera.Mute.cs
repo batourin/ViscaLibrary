@@ -9,11 +9,11 @@ namespace Visca
         private readonly ViscaMute _muteCmd;
         private readonly ViscaMuteInquiry _muteInquiry;
 
+        public event EventHandler<OnOffEventArgs> MuteChanged;
+
         #endregion Mute Commands Definition
 
         #region Mute Commands Implementations
-
-        public event EventHandler<OnOffEventArgs> MuteChanged;
 
         protected virtual void OnMuteChanged(OnOffEventArgs e)
         {
@@ -30,12 +30,15 @@ namespace Visca
         public bool Mute
         {
             get { return _mute; }
-            set
+            set { _visca.EnqueueCommand(_muteCmd.SetMode(value? OnOffMode.On : OnOffMode.Off).OnCompletion(() => { updateMute(value); })); }
+        }
+
+        private void updateMute(bool mute)
+        {
+            if(_mute != mute)
             {
-                if (value)
-                    _visca.EnqueueCommand(_muteCmd.SetMode(OnOffMode.On).OnCompletion(() => { _mute = value; }));
-                else
-                    _visca.EnqueueCommand(_muteCmd.SetMode(OnOffMode.Off).OnCompletion(() => { _mute = value; }));
+                _mute = mute;
+                OnMuteChanged(new OnOffEventArgs(mute));
             }
         }
 

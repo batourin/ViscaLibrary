@@ -35,7 +35,16 @@ namespace Visca
         public int ExpComp
         {
             get { return _expComp; }
-            set { _visca.EnqueueCommand(_expCompValueCmd.SetPosition(value).OnCompletion(() => { _expComp = value; })); }
+            set { _visca.EnqueueCommand(_expCompValueCmd.SetPosition(value).OnCompletion(() => { updateExpComp(value); })); }
+        }
+
+        private void updateExpComp(int expComp)
+        {
+            if(_expComp != expComp)
+            {
+                _expComp = expComp;
+                OnExpCompChanged(new PositionEventArgs(expComp));
+            }
         }
 
         #endregion ExpComp Commands Implementations

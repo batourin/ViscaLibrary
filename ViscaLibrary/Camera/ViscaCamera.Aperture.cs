@@ -35,7 +35,16 @@ namespace Visca
         public int Aperture
         {
             get { return _aperture; }
-            set { _visca.EnqueueCommand(_apertureValueCmd.SetPosition(value).OnCompletion(() => { _aperture = value; })); }
+            set { _visca.EnqueueCommand(_apertureValueCmd.SetPosition(value).OnCompletion(() => { updateAperture(value); })); }
+        }
+
+        private void updateAperture(int aperture)
+        {
+            if (_aperture != aperture)
+            {
+                _aperture = aperture;
+                OnApertureChanged(new PositionEventArgs(aperture));
+            }
         }
 
         #endregion Aperture Commands Implementations

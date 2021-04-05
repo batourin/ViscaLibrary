@@ -53,7 +53,7 @@ namespace Visca
             #region AE Commands Constructors
 
             _aeCmd = new ViscaAEMode((byte)id, AEMode.FullAuto);
-            _aeInquiry = new ViscaAEInquiry((byte)id, new Action<AEMode>(mode => { _ae = mode; OnAEChanged(new GenericEventArgs<AEMode>(mode)); }));
+            _aeInquiry = new ViscaAEInquiry((byte)id, new Action<AEMode>(mode => { updateAE(mode); }));
 
             #endregion AE Commands Constructors
 
@@ -61,60 +61,32 @@ namespace Visca
 
             _apertureCmd = new ViscaAperture((byte)id, UpDownMode.Up);
             _apertureValueCmd = new ViscaApertureValue((byte)id, 0);
-            _apertureInquiry = new ViscaApertureInquiry((byte)id, new Action<int>(position => { _aperture = position; OnApertureChanged(new PositionEventArgs(position)); }));
+            _apertureInquiry = new ViscaApertureInquiry((byte)id, new Action<int>(position => { updateAperture(position); }));
 
             #endregion Aperture Commands Constructors
 
             #region BackLight Commands Constructors
 
             _backLightCmd = new ViscaBackLight((byte)id, OnOffMode.On);
-            _backLightInquiry = new ViscaBackLightInquiry((byte)id, new Action<OnOffMode>(mode => { _backLight = mode; OnBackLightChanged(new OnOffEventArgs(mode)); }));
+            _backLightInquiry = new ViscaBackLightInquiry((byte)id, new Action<OnOffMode>(mode => { updateBackLight(mode); }));
 
             #endregion BackLight Commands Constructors
+
+            #region BGain Commands Constructors
+
+            _bGainCmd = new ViscaBGain((byte)id, UpDownMode.Up);
+            _bGainValueCmd = new ViscaBGainValue((byte)id, 0);
+            _bGainInquiry = new ViscaBGainInquiry((byte)id, new Action<int>(position => { updateBGain(position); }));
+
+            #endregion Gain Commands Constructors
 
             #region ExpComp Commands Constructors
 
             _expCompCmd = new ViscaExpComp((byte)id, UpDownMode.Up);
             _expCompValueCmd = new ViscaExpCompValue((byte)id, 0);
-            _expCompInquiry = new ViscaExpCompInquiry((byte)id, new Action<int>(position => { _expComp = position; OnExpCompChanged(new PositionEventArgs(position)); }));
+            _expCompInquiry = new ViscaExpCompInquiry((byte)id, new Action<int>(position => { updateExpComp(position); }));
 
             #endregion ExpComp Commands Constructors
-
-            #region Gain Commands Constructors
-
-            _gainCmd = new ViscaGain((byte)id, UpDownMode.Up);
-            _gainValueCmd = new ViscaGainValue((byte)id, 0);
-            _gainInquiry = new ViscaGainInquiry((byte)id, new Action<int>(position => { _gain = position; OnGainChanged(new PositionEventArgs(position)); }));
-
-            #endregion Gain Commands Constructors
-
-            #region Iris Commands Constructors
-
-            _irisCmd = new ViscaIris((byte)id, UpDownMode.Up);
-            _irisValueCmd = new ViscaIrisValue((byte)id, 0);
-            _irisInquiry = new ViscaIrisInquiry((byte)id, new Action<int>(position => { _iris = position; OnIrisChanged(new PositionEventArgs(position)); }));
-
-            #endregion Gain Commands Constructors
-
-            #region Power Commands Constructors
-
-            _powerCmd = new ViscaPower((byte)id, OnOffMode.On);
-            _powerInquiry = new ViscaPowerInquiry((byte)id, new Action<OnOffMode>( mode => { _power = mode; OnPowerChanged(new OnOffEventArgs(mode)); }));
-
-            #endregion Power Commands Constructors
-
-            #region Zoom Commands Constructors
-
-            _zoomStopCmd = new ViscaZoomStop((byte)id);
-            _zoomTeleCmd = new ViscaZoomTele((byte)id);
-            _zoomWideCmd = new ViscaZoomWide((byte)id);
-            _zoomSpeed = new ViscaZoomSpeed(_parameters.ZoomSpeedLimits);
-            _zoomTeleWithSpeedCmd = new ViscaZoomTeleWithSpeed((byte)id, _zoomSpeed);
-            _zoomWideWithSpeedCmd = new ViscaZoomWideWithSpeed((byte)id, _zoomSpeed);
-            _zoomPositionCmd = new ViscaZoomPosition((byte)id, 0);
-            _zoomPositionInquiry = new ViscaZoomPositionInquiry((byte)id, new Action<int>(position => { _zoomPosition = position; OnZoomPositionChanged(new PositionEventArgs(position)); }));
-
-            #endregion Zoom Commands Constructors
 
             #region Focus Commands Constructors
 
@@ -131,12 +103,28 @@ namespace Visca
 
             _focusAutoCmd = new ViscaFocusAuto((byte)id, OnOffMode.On);
             _focusAutoToggleCmd = new ViscaFocusAutoToggle((byte)id);
-            _focusAutoInquiry = new ViscaFocusAutoInquiry((byte)id, new Action<OnOffMode>(mode => { _focusAuto = mode; OnFocusAutoChanged(new OnOffEventArgs(mode)); }));
+            _focusAutoInquiry = new ViscaFocusAutoInquiry((byte)id, new Action<OnOffMode>(mode => { updateFocusAuto(mode); }));
 
             _focusPositionCmd = new ViscaFocusPosition((byte)id, 0);
-            _focusPositionInquiry = new ViscaFocusPositionInquiry((byte)id, new Action<int>(position => { _focusPosition = position; OnFocusPositionChanged(new PositionEventArgs(position)); }));
+            _focusPositionInquiry = new ViscaFocusPositionInquiry((byte)id, new Action<int>(position => { updateFocusPosition(position); }));
 
             #endregion Focus Commands Constructors
+
+            #region Gain Commands Constructors
+
+            _gainCmd = new ViscaGain((byte)id, UpDownMode.Up);
+            _gainValueCmd = new ViscaGainValue((byte)id, 0);
+            _gainInquiry = new ViscaGainInquiry((byte)id, new Action<int>(position => { updateGain(position); }));
+
+            #endregion Gain Commands Constructors
+
+            #region Iris Commands Constructors
+
+            _irisCmd = new ViscaIris((byte)id, UpDownMode.Up);
+            _irisValueCmd = new ViscaIrisValue((byte)id, 0);
+            _irisInquiry = new ViscaIrisInquiry((byte)id, new Action<int>(position => { updateIris(position); }));
+
+            #endregion Gain Commands Constructors
 
             #region Memory Commands Constructors
 
@@ -144,6 +132,20 @@ namespace Visca
             _memoryRecallCmd = new ViscaMemoryRecall((byte)id, 0);
 
             #endregion Memory Commands Constructors
+
+            #region Mute Commands Constructors
+
+            _muteCmd = new ViscaMute((byte)id, OnOffMode.On);
+            _muteInquiry = new ViscaMuteInquiry((byte)id, new Action<OnOffMode>(mode => { updateMute(mode); }));
+
+            #endregion Mute Commands Constructors
+
+            #region Power Commands Constructors
+
+            _powerCmd = new ViscaPower((byte)id, OnOffMode.On);
+            _powerInquiry = new ViscaPowerInquiry((byte)id, new Action<OnOffMode>( mode => { updatePower(mode); }));
+
+            #endregion Power Commands Constructors
 
             #region PTZ Commands Constructors
 
@@ -161,17 +163,42 @@ namespace Visca
             _ptzDownRight = new ViscaPTZDownRight((byte)id, _ptzPanSpeed, _ptzTiltSpeed);
             _ptzAbsolute = new ViscaPTZPosition((byte)id, false, _ptzPanSpeed, _ptzTiltSpeed, 0, 0);
             _ptzRelative = new ViscaPTZPosition((byte)id, true, _ptzPanSpeed, _ptzTiltSpeed, 0, 0);
+            _ptzPositionInquiry = new ViscaPTZPositionInquiry((byte)id, new Action<int, int>((panPosition, tiltPosition) => { updatePTZPosition(panPosition, tiltPosition); }));
 
             #endregion PTZ Commands Constructors
+
+            #region RGain Commands Constructors
+
+            _rGainCmd = new ViscaRGain((byte)id, UpDownMode.Up);
+            _rGainValueCmd = new ViscaRGainValue((byte)id, 0);
+            _rGainInquiry = new ViscaRGainInquiry((byte)id, new Action<int>(position => { updateRGain(position); }));
+
+            #endregion Gain Commands Constructors
+
+            #region Zoom Commands Constructors
+
+            _zoomStopCmd = new ViscaZoomStop((byte)id);
+            _zoomTeleCmd = new ViscaZoomTele((byte)id);
+            _zoomWideCmd = new ViscaZoomWide((byte)id);
+            _zoomSpeed = new ViscaZoomSpeed(_parameters.ZoomSpeedLimits);
+            _zoomTeleWithSpeedCmd = new ViscaZoomTeleWithSpeed((byte)id, _zoomSpeed);
+            _zoomWideWithSpeedCmd = new ViscaZoomWideWithSpeed((byte)id, _zoomSpeed);
+            _zoomPositionCmd = new ViscaZoomPosition((byte)id, 0);
+            _zoomPositionInquiry = new ViscaZoomPositionInquiry((byte)id, new Action<int>(position => { _zoomPosition = position; OnZoomPositionChanged(new PositionEventArgs(position)); }));
+
+            #endregion Zoom Commands Constructors
 
             _pollCommands.Add(_aeInquiry);
             _pollCommands.Add(_apertureInquiry);
             _pollCommands.Add(_backLightInquiry);
+            _pollCommands.Add(_bGainInquiry);
             _pollCommands.Add(_expCompInquiry);
             _pollCommands.Add(_gainInquiry);
             _pollCommands.Add(_irisInquiry);
             _pollCommands.Add(_muteInquiry);
             _pollCommands.Add(_powerInquiry);
+            _pollCommands.Add(_ptzPositionInquiry);
+            _pollCommands.Add(_rGainInquiry);
             _pollCommands.Add(_zoomPositionInquiry);
             _pollCommands.Add(_focusAutoInquiry);
             _pollCommands.Add(_focusPositionInquiry);

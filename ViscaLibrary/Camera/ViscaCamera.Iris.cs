@@ -10,14 +10,14 @@ namespace Visca
         private readonly ViscaIrisValue _irisValueCmd;
         private readonly ViscaIrisInquiry _irisInquiry;
 
+        public event EventHandler<PositionEventArgs> IrisChanged;
+
         #endregion Iris Commands Definition
 
         #region Iris Commands Implementations
 
         public void IrisUp() { _visca.EnqueueCommand(_irisCmd.SetMode(UpDownMode.Up)); }
         public void IrisDown() { _visca.EnqueueCommand(_irisCmd.SetMode(UpDownMode.Down)); }
-
-        public event EventHandler<PositionEventArgs> IrisChanged;
 
         protected virtual void OnIrisChanged(PositionEventArgs e)
         {
@@ -35,7 +35,16 @@ namespace Visca
         public int Iris
         {
             get { return _iris; }
-            set { _visca.EnqueueCommand(_irisValueCmd.SetPosition(value).OnCompletion(() => { _iris = value; })); }
+            set { _visca.EnqueueCommand(_irisValueCmd.SetPosition(value).OnCompletion(() => { updateIris(value); })); }
+        }
+
+        private void updateIris(int iris)
+        {
+            if(_iris != iris)
+            {
+                _iris = iris;
+                OnIrisChanged(new PositionEventArgs(iris));
+            }
         }
 
         #endregion Iris Commands Implementations

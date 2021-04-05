@@ -9,11 +9,11 @@ namespace Visca
         private readonly ViscaAEMode _aeCmd;
         private readonly ViscaAEInquiry _aeInquiry;
 
+        public event EventHandler<GenericEventArgs<AEMode>> AEChanged;
+
         #endregion AE Commands Definition
 
         #region AE Commands Implementations
-
-        public event EventHandler<GenericEventArgs<AEMode>> AEChanged;
 
         protected virtual void OnAEChanged(GenericEventArgs<AEMode> e)
         {
@@ -31,7 +31,16 @@ namespace Visca
         public AEMode AE
         {
             get { return _ae; }
-            set { _visca.EnqueueCommand(_aeCmd.SetMode(value).OnCompletion(() => { _ae = value; })); }
+            set { _visca.EnqueueCommand(_aeCmd.SetMode(value).OnCompletion(() => { updateAE(value); })); }
+        }
+
+        private void updateAE(AEMode mode)
+        {
+            if (_ae != mode)
+            {
+                _ae = mode;
+                OnAEChanged(new GenericEventArgs<AEMode>(mode));
+            }
         }
 
         #endregion AE Commands Implementations

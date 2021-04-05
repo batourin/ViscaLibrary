@@ -9,11 +9,11 @@ namespace Visca
         private readonly ViscaPower _powerCmd;
         private readonly ViscaPowerInquiry _powerInquiry;
 
+        public event EventHandler<OnOffEventArgs> PowerChanged;
+
         #endregion Power Commands Definition
 
         #region Power Commands Implementations
-
-        public event EventHandler<OnOffEventArgs> PowerChanged;
 
         protected virtual void OnPowerChanged(OnOffEventArgs e)
         {
@@ -30,12 +30,15 @@ namespace Visca
         public bool Power
         {
             get { return _power; }
-            set
+            set { _visca.EnqueueCommand(_powerCmd.SetMode(value? OnOffMode.On : OnOffMode.Off).OnCompletion(() => { updatePower(value); })); }
+        }
+
+        private void updatePower(bool power)
+        {
+            if(_power != power)
             {
-                if (value)
-                    _visca.EnqueueCommand(_powerCmd.SetMode(OnOffMode.On).OnCompletion(() => { _power = value; }));
-                else
-                    _visca.EnqueueCommand(_powerCmd.SetMode(OnOffMode.Off).OnCompletion(() => { _power = value; }));
+                _power = power;
+                OnPowerChanged(new OnOffEventArgs(power));
             }
         }
 

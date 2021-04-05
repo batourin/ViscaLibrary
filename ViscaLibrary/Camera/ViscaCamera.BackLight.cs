@@ -31,12 +31,15 @@ namespace Visca
         public bool BackLight
         {
             get { return _backLight; }
-            set
+            set { _visca.EnqueueCommand(_backLightCmd.SetMode(value? OnOffMode.On : OnOffMode.Off).OnCompletion(() => { updateBackLight(value); })); }
+        }
+
+        private void updateBackLight(bool backLight)
+        {
+            if(_backLight != backLight)
             {
-                if (value)
-                    _visca.EnqueueCommand(_backLightCmd.SetMode(OnOffMode.On).OnCompletion(() => { _backLight = value; }));
-                else
-                    _visca.EnqueueCommand(_backLightCmd.SetMode(OnOffMode.Off).OnCompletion(() => { _backLight = value; }));
+                _backLight = backLight;
+                OnBackLightChanged(new OnOffEventArgs(backLight));
             }
         }
 

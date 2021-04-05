@@ -19,9 +19,11 @@ namespace Visca
         private readonly ViscaFocusAuto _focusAutoCmd;
         private readonly ViscaFocusAutoToggle _focusAutoToggleCmd;
         private readonly ViscaFocusAutoInquiry _focusAutoInquiry;
+        public event EventHandler<OnOffEventArgs> FocusAutoChanged;
 
         private readonly ViscaFocusPosition _focusPositionCmd;
         private readonly ViscaFocusPositionInquiry _focusPositionInquiry;
+        public event EventHandler<PositionEventArgs> FocusPositionChanged;
 
         #endregion Focus Commands Definition
 
@@ -38,10 +40,7 @@ namespace Visca
         public byte FocusSpeed
         {
             get { return _focusSpeed.Value; }
-            set
-            {
-                _focusSpeed.Value = value;
-            }
+            set { _focusSpeed.Value = value; }
         }
 
         public void FocusFarWithSpeed() { _visca.EnqueueCommand(_focusFarWithSpeedCmd); }
@@ -52,33 +51,27 @@ namespace Visca
 
         public void FocusNearLimit(int position) { _visca.EnqueueCommand(_focusNearLimitCmd.SetPosition(position)); }
 
-        public event EventHandler<OnOffEventArgs> FocusAutoChanged;
-
         protected virtual void OnFocusAutoChanged(OnOffEventArgs e)
         {
             EventHandler<OnOffEventArgs> handler = FocusAutoChanged;
+#if SSHARP
             if (handler != null)
                 handler(this, e);
+#else
+            handler?.Invoke(this, e);
+#endif
         }
 
         private bool _focusAuto;
         public bool FocusAuto
         {
             get { return _focusAuto; }
-            set
-            {
-                if (value)
-                    _visca.EnqueueCommand(_focusAutoCmd.SetMode(OnOffMode.On).OnCompletion(() => { _focusAuto = value; }));
-                else
-                    _visca.EnqueueCommand(_focusAutoCmd.SetMode(OnOffMode.On).OnCompletion(() => { _focusAuto = value; }));
-            }
+            set { _visca.EnqueueCommand(_focusAutoCmd.SetMode(value ? OnOffMode.On: OnOffMode.Off).OnCompletion(() => { updateFocusAuto(value); })); }
         }
 
         public void FocusAutoToggle() { _visca.EnqueueCommand(_focusAutoToggleCmd); }
 
         public void FocusSetPosition(int position) { _visca.EnqueueCommand(_focusPositionCmd.SetPosition(position)); }
-
-        public event EventHandler<PositionEventArgs> FocusPositionChanged;
 
         protected virtual void OnFocusPositionChanged(PositionEventArgs e)
         {
@@ -95,7 +88,25 @@ namespace Visca
         public int FocusPosition
         {
             get { return _focusPosition; }
-            set { _visca.EnqueueCommand(_focusPositionCmd.SetPosition(value).OnCompletion(()=> { _focusPosition = value; })); }
+            set { _visca.EnqueueCommand(_focusPositionCmd.SetPosition(value).OnCompletion(()=> { updateFocusPosition(value); })); }
+        }
+
+        private void updateFocusAuto(bool focusAuto)
+        {
+            if (_focusAuto != focusAuto)
+            {
+                _focusAuto = focusAuto;
+                OnFocusAutoChanged(new OnOffEventArgs(focusAuto));
+            }
+        }
+
+        private void updateFocusPosition(int focusPosition)
+        {
+            if(_focusPosition != focusPosition)
+            {
+                _focusPosition = focusPosition;
+                OnFocusPositionChanged(new PositionEventArgs(focusPosition));
+            }
         }
 
         #endregion Focus Commands Implementations
