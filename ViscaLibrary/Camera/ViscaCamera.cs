@@ -242,7 +242,28 @@ namespace Visca
             StringBuilder sb = new StringBuilder();
 
             sb.AppendFormat("ViscaCamera: {0}\r\n", (byte)_id);
-            sb.AppendFormat("\tPower: {0}\r\n", Power?"ON":"OFF");
+            sb.AppendFormat("\tPower:\t\t{0}\r\n", Power ? "ON" : "OFF");
+            sb.AppendFormat("\tPan:\t\t{0}\r\n", PanPosition);
+            sb.AppendFormat("\tPan Speed:\t\t{0}\r\n", PanSpeed);
+            sb.AppendFormat("\tTilt:\t\t{0}\r\n", TiltPosition);
+            sb.AppendFormat("\tTilt Speed:\t\t{0}\r\n", TiltSpeed);
+            sb.AppendFormat("\tAE:\t\t{0}\r\n", AE);
+            sb.AppendFormat("\tAperture:\t\t{0}\r\n", Aperture);
+            sb.AppendFormat("\tBackLight:\t\t{0}\r\n", BackLight ? "ON" : "OFF");
+            sb.AppendFormat("\tExpComp:\t\t{0}\r\n", ExpComp);
+            sb.AppendFormat("\tFocusMode:\t\t{0}\r\n", FocusAuto ? "ON" : "OFF");
+            sb.AppendFormat("\tFocus:\t\t{0}\r\n", FocusPosition);
+            sb.AppendFormat("\tGain:\t\t{0}\r\n", Gain);
+            sb.AppendFormat("\tBGain:\t\t{0}\r\n", BGain);
+            sb.AppendFormat("\tRGain:\t\t{0}\r\n", RGain);
+            sb.AppendFormat("\tRGain: \t{0}\r\n", Iris);
+            sb.AppendFormat("\tMute:\t\t{0}\r\n", Mute ? "ON":"OFF");
+            sb.AppendFormat("\tShutter:\t\t{0}\r\n", Shutter);
+            sb.AppendFormat("\tTitle:\t\t{0}\r\n", Title ? "ON" : "OFF");
+            sb.AppendFormat("\tWB:\t\t{0}\r\n", WB);
+            sb.AppendFormat("\tWideDynamic:\t\t{0}\r\n", WideDynamicMode);
+            sb.AppendFormat("\tZoom:\t\t{0}\r\n", ZoomPosition);
+            sb.AppendFormat("\tZoom Speed:\t\t{0}\r\n", ZoomSpeed);
 
             return sb.ToString();
         }
