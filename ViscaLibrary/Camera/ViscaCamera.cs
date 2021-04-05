@@ -195,7 +195,14 @@ namespace Visca
             _wbCmd = new ViscaWBMode((byte)id, WBMode.Auto);
             _wbInquiry = new ViscaWBInquiry((byte)id, new Action<WBMode>(mode => { updateWB(mode); }));
 
-            #endregion AE Commands Constructors
+            #endregion WB Commands Constructors
+
+            #region WideDynamic Commands Constructors
+
+            _wideDynamicCmd = new ViscaWideDynamicMode((byte)id, OnOffMode.On);
+            _wideDynamicInquiry = new ViscaWideDynamicInquiry((byte)id, new Action<OnOffMode>(mode => { updateWideDynamicMode(mode); }));
+
+            #endregion WideDynamic Commands Constructors
 
             #region Zoom Commands Constructors
 
@@ -226,6 +233,7 @@ namespace Visca
             _pollCommands.Add(_shutterInquiry);
             _pollCommands.Add(_titleInquiry);
             _pollCommands.Add(_wbInquiry);
+            _pollCommands.Add(_wideDynamicInquiry);
             _pollCommands.Add(_zoomPositionInquiry);
         }
 
