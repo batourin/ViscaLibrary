@@ -173,6 +173,14 @@ namespace Visca
             _rGainValueCmd = new ViscaRGainValue((byte)id, 0);
             _rGainInquiry = new ViscaRGainInquiry((byte)id, new Action<int>(position => { updateRGain(position); }));
 
+            #endregion RGain Commands Constructors
+
+            #region Shutter Commands Constructors
+
+            _shutterCmd = new ViscaShutter((byte)id, UpDownMode.Up);
+            _shutterValueCmd = new ViscaShutterValue((byte)id, 0);
+            _shutterInquiry = new ViscaShutterInquiry((byte)id, new Action<int>(position => { updateShutter(position); }));
+
             #endregion Gain Commands Constructors
 
             #region Zoom Commands Constructors
