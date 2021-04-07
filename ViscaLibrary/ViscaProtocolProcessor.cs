@@ -51,6 +51,11 @@ namespace Visca
         private readonly byte[] _incomingBuffer = new byte[1024];
         private int _incomingBufferLength = 0;
 
+        /// <summary>
+        /// Timeout in milliseconds for wating for response from camera
+        /// </summary>
+        private readonly int _commandTimeOut = 2000;
+
 #if SSHARP
         private readonly CrestronQueue<ViscaTxPacket> _sendQueue = new CrestronQueue<ViscaTxPacket>(30);
         private readonly CrestronQueue<ViscaRxPacket> _responseQueue = new CrestronQueue<ViscaRxPacket>(15);
@@ -83,9 +88,14 @@ namespace Visca
         private readonly Action<byte[]> _sendData;
 
         public ViscaProtocolProcessor(Action<byte[]> sendData, Action<byte, string, object[]> logAction)
+            :this(sendData, logAction, 2000)
+        { }
+
+        public ViscaProtocolProcessor(Action<byte[]> sendData, Action<byte, string, object[]> logAction, int commandTimeOut)
         {
             _sendData = sendData;
             _logAction = logAction;
+            _commandTimeOut = commandTimeOut;
 
             Cameras = new CamerasIndexer(getCameraAction);
 #if SSHARP
@@ -114,6 +124,11 @@ namespace Visca
             _responseQueueCancel.Cancel(false);
         }
 #endif
+
+        /// <summary>
+        /// Commands in the sending queue
+        /// </summary>
+        public int CommandsInQueue { get { return _sendQueue.Count; } }
 
         public void EnqueueCommand(ViscaTxPacket command)
         {
@@ -177,9 +192,9 @@ namespace Visca
                 logMessage(1, "Command '{0}' Dequeued. CommandQueue Size: {1}", _sendQueueCommandInProgress.ToString(), _sendQueue.Count);
                 // start the timer to expire current command in case of no response
 #if SSHARP
-                _sendQueueItemInProgressTimer.Reset(2000);
+                _sendQueueItemInProgressTimer.Reset(_commandTimeOut);
 #else
-                _sendQueueItemInProgressTimer.Change(2000, Timeout.Infinite);
+                _sendQueueItemInProgressTimer.Change(_commandTimeOut, Timeout.Infinite);
 #endif
                 _sendData(_sendQueueCommandInProgress);
             }
