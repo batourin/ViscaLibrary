@@ -43,6 +43,8 @@ namespace Visca
             }
         }
 
+        public void BackLightPoll() { _visca.EnqueueCommand(_backLightInquiry); }
+
         #endregion BackLight Commands Implementations
 
     }

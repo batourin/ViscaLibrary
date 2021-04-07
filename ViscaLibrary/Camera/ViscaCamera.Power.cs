@@ -42,6 +42,8 @@ namespace Visca
             }
         }
 
+        public void PowerPoll() { _visca.EnqueueCommand(_powerInquiry); }
+
         #endregion Power Commands Implementations
 
     }

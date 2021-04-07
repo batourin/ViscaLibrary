@@ -107,6 +107,8 @@ namespace Visca
             }
         }
 
+        public void PanTiltPositionPoll() { _visca.EnqueueCommand(_ptzPositionInquiry); }
+
         #endregion PTZ Commands Implementations
 
     }

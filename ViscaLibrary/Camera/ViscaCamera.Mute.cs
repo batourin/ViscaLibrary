@@ -42,6 +42,8 @@ namespace Visca
             }
         }
 
+        public void MutePoll() { _visca.EnqueueCommand(_muteInquiry); }
+
         #endregion Mute Commands Implementations
 
     }

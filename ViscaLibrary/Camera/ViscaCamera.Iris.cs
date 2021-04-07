@@ -47,6 +47,8 @@ namespace Visca
             }
         }
 
+        public void IrisPoll() { _visca.EnqueueCommand(_irisInquiry); }
+
         #endregion Iris Commands Implementations
 
     }

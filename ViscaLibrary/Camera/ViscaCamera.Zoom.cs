@@ -63,6 +63,8 @@ namespace Visca
             }
         }
 
+        public void ZoomPositionPoll() { _visca.EnqueueCommand(_zoomPositionInquiry); }
+
         #endregion Zoom Commands Implementations
 
     }

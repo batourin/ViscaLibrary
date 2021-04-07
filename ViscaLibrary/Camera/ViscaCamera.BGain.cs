@@ -47,6 +47,8 @@ namespace Visca
             }
         }
 
+        public void BGainPoll() { _visca.EnqueueCommand(_bGainInquiry); }
+
         #endregion BGain Commands Implementations
 
     }

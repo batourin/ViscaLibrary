@@ -47,6 +47,8 @@ namespace Visca
             }
         }
 
+        public void GainPoll() { _visca.EnqueueCommand(_gainInquiry); }
+
         #endregion Gain Commands Implementations
 
     }

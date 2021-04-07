@@ -47,6 +47,8 @@ namespace Visca
             }
         }
 
+        public void ExpCompPoll() { _visca.EnqueueCommand(_expCompInquiry); }
+
         #endregion ExpComp Commands Implementations
 
     }

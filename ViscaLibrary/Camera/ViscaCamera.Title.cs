@@ -42,6 +42,8 @@ namespace Visca
             }
         }
 
+        public void TitlePoll() { _visca.EnqueueCommand(_titleInquiry); }
+
         #endregion Title Commands Implementations
 
     }

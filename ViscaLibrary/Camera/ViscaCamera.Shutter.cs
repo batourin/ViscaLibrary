@@ -47,6 +47,8 @@ namespace Visca
             }
         }
 
+        public void ShutterPoll() { _visca.EnqueueCommand(_shutterInquiry); }
+
         #endregion Shutter Commands Implementations
 
     }

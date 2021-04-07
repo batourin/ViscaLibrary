@@ -109,6 +109,10 @@ namespace Visca
             }
         }
 
+        public void FocusAutoPoll() { _visca.EnqueueCommand(_focusAutoInquiry); }
+
+        public void FocusPositionPoll() { _visca.EnqueueCommand(_focusPositionInquiry); }
+
         #endregion Focus Commands Implementations
 
     }

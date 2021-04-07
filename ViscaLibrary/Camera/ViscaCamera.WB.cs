@@ -43,6 +43,8 @@ namespace Visca
             }
         }
 
+        public void WBModePoll() { _visca.EnqueueCommand(_wbInquiry); }
+
         #endregion WB Commands Implementations
 
     }

@@ -43,6 +43,8 @@ namespace Visca
             }
         }
 
+        public void AEPoll() { _visca.EnqueueCommand(_aeInquiry); }
+
         #endregion AE Commands Implementations
 
     }

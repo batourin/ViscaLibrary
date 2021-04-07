@@ -47,6 +47,8 @@ namespace Visca
             }
         }
 
+        public void AperturePoll() { _visca.EnqueueCommand(_apertureInquiry); }
+
         #endregion Aperture Commands Implementations
 
     }

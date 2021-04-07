@@ -42,6 +42,8 @@ namespace Visca
             }
         }
 
+        public void WideDynamicModePoll() { _visca.EnqueueCommand(_wideDynamicInquiry); }
+
         #endregion WideDynamic Commands Implementations
 
     }
