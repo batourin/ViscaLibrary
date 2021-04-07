@@ -53,8 +53,9 @@ namespace Visca
 
         /// <summary>
         /// Timeout in milliseconds for wating for response from camera
+        /// Increase Sony's ResponseTimeout to accomodate parsing, processing, etc
         /// </summary>
-        private readonly int _commandTimeOut = 2000;
+        private readonly int _commandTimeOut = Visca.ResponseTimeout * 10;
 
 #if SSHARP
         private readonly CrestronQueue<ViscaTxPacket> _sendQueue = new CrestronQueue<ViscaTxPacket>(30);
@@ -88,7 +89,7 @@ namespace Visca
         private readonly Action<byte[]> _sendData;
 
         public ViscaProtocolProcessor(Action<byte[]> sendData, Action<byte, string, object[]> logAction)
-            :this(sendData, logAction, 2000)
+            :this(sendData, logAction, Visca.ResponseTimeout * 10)
         { }
 
         public ViscaProtocolProcessor(Action<byte[]> sendData, Action<byte, string, object[]> logAction, int commandTimeOut)
