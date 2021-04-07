@@ -52,11 +52,11 @@ namespace Visca
         private int _incomingBufferLength = 0;
 
 #if SSHARP
-        private readonly CrestronQueue<ViscaTxPacket> _sendQueue = new CrestronQueue<ViscaTxPacket>(15);
+        private readonly CrestronQueue<ViscaTxPacket> _sendQueue = new CrestronQueue<ViscaTxPacket>(30);
         private readonly CrestronQueue<ViscaRxPacket> _responseQueue = new CrestronQueue<ViscaRxPacket>(15);
         private CTimer _sendQueueItemInProgressTimer;
 #else
-        private readonly BlockingCollection<ViscaTxPacket> _sendQueue = new BlockingCollection<ViscaTxPacket>(15);
+        private readonly BlockingCollection<ViscaTxPacket> _sendQueue = new BlockingCollection<ViscaTxPacket>(30);
         private readonly BlockingCollection<ViscaRxPacket> _responseQueue = new BlockingCollection<ViscaRxPacket>(15);
         private readonly CancellationTokenSource _responseQueueCancel = new CancellationTokenSource();
         private readonly Timer _sendQueueItemInProgressTimer;
@@ -142,6 +142,7 @@ namespace Visca
                 if (command is ViscaDynamicCommand)
                     command = (command as ViscaDynamicCommand).Clone();
                 _sendQueue.Enqueue(command);
+                logMessage(1, "Enqueued command '{0}'. CommandQueue Size: '{1}'", command.ToString(), _sendQueue.Count);
             }
 
             if (_sendQueueCommandInProgress == null && (_responseQueue.Count == 0))
