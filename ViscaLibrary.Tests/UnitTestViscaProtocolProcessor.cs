@@ -53,6 +53,44 @@ namespace Visca.Tests
         }
 
         [Test]
+        public void DuplicateCommandTest()
+        {
+            ViscaApertureInquiry apertureInquiry = new ViscaApertureInquiry(id, (_) => { });
+            ViscaBackLightInquiry backLightInquiry = new ViscaBackLightInquiry(id, (_) => { });
+            ViscaBGainInquiry bGainInquiry = new ViscaBGainInquiry(id, (_) => { });
+            ViscaExpCompInquiry expCompInquiry = new ViscaExpCompInquiry(id, (_) => { });
+            ViscaGainInquiry gainInquiry = new ViscaGainInquiry(id, (_) => { });
+
+            // Special local processor with very long timeout
+            BlockingCollection<byte[]> sendQueue = new BlockingCollection<byte[]>(15);
+            ViscaProtocolProcessor visca = new ViscaProtocolProcessor(
+                new Action<byte[]>(b =>
+                {
+                    sendQueue.Add(b);
+                }),
+                new Action<byte, string, object[]>((l, f, o) =>
+                {
+                    Console.WriteLine("VISCA LOG:[{0}]", String.Format(f, o));
+                }),
+                120000
+            );
+
+            visca.EnqueueCommand(apertureInquiry);
+            // First command will be de-queued after enqueing
+            visca.CommandsInQueue.Should().Be(0);
+            visca.EnqueueCommand(backLightInquiry);
+            visca.CommandsInQueue.Should().Be(1);
+            visca.EnqueueCommand(bGainInquiry);
+            visca.CommandsInQueue.Should().Be(2);
+            visca.EnqueueCommand(expCompInquiry);
+            visca.CommandsInQueue.Should().Be(3);
+            visca.EnqueueCommand(gainInquiry);
+            visca.CommandsInQueue.Should().Be(4);
+            visca.EnqueueCommand(bGainInquiry);
+            visca.CommandsInQueue.Should().Be(4);
+        }
+
+        [Test]
         public async Task Power_OnWithFeedback()
         {
             bool power = false;
@@ -231,7 +269,7 @@ namespace Visca.Tests
         public async Task WBInquiry()
         {
             WBMode wbMode = WBMode.Auto;
-            ViscaWBInquiry wbInquiry = new ViscaWBInquiry(id, new Action<WBMode>( mode => { wbMode = mode; Console.WriteLine("Event: WB Mode: {0}", mode); }));
+            ViscaWBInquiry wbInquiry = new ViscaWBInquiry(id, new Action<WBMode>(mode => { wbMode = mode; Console.WriteLine("Event: WB Mode: {0}", mode); }));
             visca.EnqueueCommand(wbInquiry);
 
             Assert.That(sendQueue.TryTake(out byte[] wbInquiryPacket, 100), Is.True, "Timeout on sending data for WB Inquiry command");
@@ -280,7 +318,7 @@ namespace Visca.Tests
             visca.ProcessIncomingData(new byte[] { 0x90, 0x50, 0xFF });
 
             int rgainPosition = 0xff;
-            ViscaRGainInquiry rgainInquiry = new ViscaRGainInquiry(id, new Action<int>( p => { rgainPosition = p; Console.WriteLine("Event: RGainValue: 0x{0:X4} ({0})", p); }));
+            ViscaRGainInquiry rgainInquiry = new ViscaRGainInquiry(id, new Action<int>(p => { rgainPosition = p; Console.WriteLine("Event: RGainValue: 0x{0:X4} ({0})", p); }));
 
             visca.EnqueueCommand(rgainInquiry);
 
@@ -293,6 +331,5 @@ namespace Visca.Tests
 
             rgainPosition.Should().Be(0xba);
         }
-
     }
 }
