@@ -162,11 +162,6 @@ namespace Visca
         public static partial class Commands
         {
             public const byte Power = 0x00;
-            public static class PowerCommands
-            {
-                public const byte On = 0x02;
-                public const byte Off = 0x03;
-            }
 
             #region Aperture 0x02, 0x42
 
@@ -261,11 +256,11 @@ namespace Visca
 
             #endregion Gain
 
-            #region ExpComp 0x0C, 0x4C
+            #region ExpComp 0x0E, 0x4E
 
-            public const byte ExpComp = 0x0C;
-            public const byte ExpCompValue = 0x4C;
-            public const byte ExpCompPower = 0x5C;
+            public const byte ExpComp = 0x0E;
+            public const byte ExpCompValue = 0x4E;
+            public const byte ExpCompPower = 0x5E;
 
             #endregion ExpComp
 
