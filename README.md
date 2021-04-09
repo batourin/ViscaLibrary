@@ -10,6 +10,7 @@ Implementation of VISCA serial protocol in C# as .NET Library
 ## General info
 Currently covers 70% of the Visca protocol commands, mostly operational perspective.
 Project target was to create C# OOP library for use in Crestron based control systems.
+Visca.Camera class is reference implementation of the library lower level commands.
 	
 ## Technologies
 Project is created with:
@@ -26,4 +27,4 @@ Nuget.exe is available at [nuget.org](https://dist.nuget.org/win-x86-commandline
 - [ ] Address setup commands
 - [ ] Model query commands
 - [ ] Vendor specific commands
-
+- [ ] Camera Reference implementation to handle additional vendor commands and limits overrides
