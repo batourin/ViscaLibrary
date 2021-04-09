@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>ViscaLibrary</id>
-    <version>1.0.99</version>
+    <version>1.1.0</version>
     <authors>Maxim Batourine</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>

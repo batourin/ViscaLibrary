@@ -10,8 +10,8 @@
     <RepositoryUrl>https://github.com/batourin/ViscaLibrary</RepositoryUrl>
     <UserSecretsId>6b9ff673-e638-4bae-b8e3-751fa9463345</UserSecretsId>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-    <Version>1.0.2</Version>
-    <AssemblyVersion>1.0.*</AssemblyVersion>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.*</AssemblyVersion>
     <Deterministic>false</Deterministic>
   </PropertyGroup>
 
