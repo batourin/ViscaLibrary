@@ -44,7 +44,7 @@ namespace Visca
     }
 #endif
 
-    public class ViscaProtocolProcessor
+    public class ViscaProtocolProcessor : IDisposable
     {
         private readonly Dictionary<ViscaCameraId, ViscaCamera> _cameras = new Dictionary<ViscaCameraId, ViscaCamera>(7);
 
@@ -118,13 +118,13 @@ namespace Visca
 #endif
         }
 
-#if !SSHARP
-        ~ViscaProtocolProcessor()
+        public void Dispose()
         {
+#if !SSHARP
             _responseQueue.CompleteAdding();
             _responseQueueCancel.Cancel(false);
-        }
 #endif
+        }
 
         /// <summary>
         /// Commands in the sending queue
@@ -322,6 +322,11 @@ namespace Visca
                 catch (OperationCanceledException)
                 {
                     logMessage(2, "Visca Response Queue shutdown");
+                    break;
+                }
+                catch (InvalidOperationException)
+                {
+                    logMessage(2, "Visca Response Queue shutdown 2");
                     break;
                 }
 #endif
